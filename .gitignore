@@ -2,3 +2,4 @@ dataset/x_test
 dataset/x_train
 dataset/y_train
 *.zip
+__pycache__
