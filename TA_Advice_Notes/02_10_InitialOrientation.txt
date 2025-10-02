@@ -1,0 +1,9 @@
+- Baseline ^**^*
+- Expanding features ^**^*
+- How to deal w/ imbalance (we should be taking into account imbalance in loss) ^**^*
+- How to  reduce features (dimensionality reduction first)
+- It's a good idea to normalize features ^**^*
+- It's 
+- Look to last years ideas, many times same techniques can still apply
+- Showing we did a lots of things.
+- Evaluation pipeline ASAP ^**^*
