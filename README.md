@@ -6,6 +6,12 @@
 - Lluc: description of each of the features
 - Siscu - split training set into train and test
 - Ola + Lluc + Siscu: each one applies a function to the dataset
-  -Ola: mean_sgd
+  - Ola: mean_sgd
   - Lluc:mean_gd
   - Siscu: least_squares
+
+#  [for 6/10]
+- Ola: Implement the evaluation step
+- Lluc: Implement the data cleaning for the threshold approach
+- Siscu: Implement the data split & main implementation
+- Ola + Lluc + Sicu: bring all functions that are covered on the first four labs and compare them (make sure that the provided tests are passed)
