@@ -77,14 +77,16 @@ def ridge_regression(y, tx, lambda_):
 
         Returns:
             w: optimal weights, numpy array of shape(D,), D is the number of features.
+            loss: scalar MSE
         """
     N, D = tx.shape
     lambda_prime = 2 * lambda_ * N
     tx_t = tx.T
     A = tx_t @ tx + lambda_prime * np.eye(D)
     b = tx_t @ y
-    weights = np.linalg.solve(A, b)
-    return weights
+    w = np.linalg.solve(A, b)
+    loss = mean_squared_error(y, tx, w)
+    return w, loss
 
 
 ########################################################################################3
