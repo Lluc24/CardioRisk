@@ -34,11 +34,14 @@ def get_initial_data(dataset_path: str) -> tuple[np.ndarray, np.ndarray, np.ndar
     headers: list[str] = get_headers(dataset_path)
     # Get the index of the 'GENHLTH' column
     index: int = headers.index('GENHLTH')
-    (x_train, x_test, y_train, train_ids, test_ids) = load_csv_data(dataset_path)
+    x_train, x_test, y_train, train_ids, test_ids = load_csv_data(dataset_path)
+    N, _ = x_train.shape
     x_train = np.nan_to_num(x_train, nan=0.0)
-    x_train: np.ndarray = standardize(x_train[:, index])
+    x_train = x_train[:, index].reshape(-1, 1)  # By default, selecting one row transform the matrix to a vector
+    x_train = standardize(x_train.reshape(-1, 1))
+    x_train = np.hstack([np.ones((N, 1)), x_train])
     x_test = np.nan_to_num(x_test, nan=0.0)
-    x_test: np.ndarray = standardize(x_test[:, index])
+    x_test = standardize(x_test[:, index])
     return x_train, x_test, y_train, train_ids, test_ids
 
 
