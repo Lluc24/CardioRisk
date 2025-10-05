@@ -1,5 +1,4 @@
 import numpy as np
-from tqdm import tqdm
 
 def mean_squared_error(y, tx, w):
     """Calculate the loss using MSE
@@ -51,7 +50,7 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
             loss: the value of the loss (MSE) using the last weight vector
         """
     w = initial_w
-    for n_iter in tqdm(range(max_iters)):
+    for _ in range(max_iters):
         gradient = compute_gradient(y, tx, w)
         w = w - gamma * gradient
 
