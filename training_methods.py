@@ -100,3 +100,17 @@ def ridge_regression(y, tx, lambda_):
     # Solving the system
     w = np.linalg.solve(M, b)
     return w
+
+def build_model(weights: np.ndarray):
+    """Builds the function implementing the prediction using a linear regression with weights weights
+    
+    Args:
+        weights: numpy array of shape (D,), D is the number of features
+    
+    Returns:
+        f: a fucntion implementing the linear regression predicting function parametrized by weights
+    """
+
+    def f(datapoint: np.ndarray):
+        return np.dot(datapoint, weights)
+    return f
