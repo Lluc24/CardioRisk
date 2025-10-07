@@ -185,3 +185,15 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
             start_index + batch_size
         )  # The first data point of the following batch
         yield y[start_index:end_index], tx[start_index:end_index]
+
+def predict_labels(x: np.ndarray, w: np.ndarray) -> np.ndarray:
+    """Generates class predictions given weights, and a test data matrix
+    Args:
+        x: numpy array of shape=(num_samples, num_features)
+        w: numpy array of shape=(num_features, )
+    Returns:
+        numpy array of shape=(num_samples, ) containing the predicted class labels
+    """
+    y_pred = x @ w
+    y_pred_labels = np.where(y_pred <= 0, -1, 1)
+    return y_pred_labels
