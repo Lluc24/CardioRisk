@@ -108,9 +108,9 @@ def build_model(weights: np.ndarray):
         weights: numpy array of shape (D,), D is the number of features
     
     Returns:
-        f: a fucntion implementing the linear regression predicting function parametrized by weights
+        f: a fuctcion implementing the linear regression predicting function parametrized by weights. Args: datapint np array (N, D). Returns: np array (N,)
     """
 
-    def f(datapoint: np.ndarray):
-        return np.dot(datapoint, weights)
+    def f(tx: np.ndarray):
+        return tx @ weights
     return f

@@ -9,7 +9,7 @@ def split_data(x, y, ratio, seed=1):
     it could be useful.
 
     Args:
-        x: numpy array of shape (N,), N is the number of samples.
+        x: numpy array of shape (N,D), N is the number of samples.
         y: numpy array of shape (N,).
         ratio: scalar in [0,1]
         seed: integer.
