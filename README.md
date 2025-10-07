@@ -4,9 +4,9 @@
 - everyone makes a model (pick whatever function) with all their features and % of dataset
 - then remove some features and see how the accuracy changes
 - data division
--   Lluc: columns 0-104
--   Siscu: 105-210
--   Ola: 211 - end
+-   Lluc: columns 1-106
+-   Siscu: 107-213
+-   Ola: 213 - end
 
 # [for 02/10]
 - Ola: compile the array of info about features and select ~ 20 correlated features with not a lot of nulls for first pass function
