@@ -1,5 +1,12 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/UcP9Py08)
 
+# [for 09/10] (if we can, if not, we work on it Thursday)
+- everyone makes a model (pick whatever function) with all their features and % of dataset
+- then remove some features and see how the accuracy changes
+- data division
+-   Lluc: columns 1-106
+-   Siscu: 107-213
+-   Ola: 213 - end
 
 # [for 02/10]
 - Ola: compile the array of info about features and select ~ 20 correlated features with not a lot of nulls for first pass function
