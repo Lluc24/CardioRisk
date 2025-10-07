@@ -23,13 +23,15 @@ def tpr(y_true,y_predicted):
     TP=np.sum(np.where((y_predicted==1) & (y_true==1),1,0))
     FN=np.sum(np.where((y_predicted==-1) & (y_true==1),1,0))
     output=TP/(TP+FN)
+    print(f"tpr -> TP: {TP}, FN: {FN}, TPR: {output}")
     return output 
 
 def fpr(y_true,y_predicted):
     """ false positive rate = (FP)/(FP+TN) """
     FP=np.sum(np.where((y_predicted==1) & (y_true==-1),1,0))
     TN=np.sum(np.where((y_predicted==-1) & (y_true==-1),1,0))
-    output=FP/(FP+TN)
+    output = FP / (FP + TN)
+    print(f"fpr -> FP: {FP}, TN: {TN}, FPR: {output}")
     return output
 
 def f1(y_true,y_predicted):
@@ -37,6 +39,7 @@ def f1(y_true,y_predicted):
     prec=precision(y_true,y_predicted)
     rec=tpr(y_true,y_predicted)
     output=2*(prec*rec)/(prec+rec)
+    print(f"f1 -> Precision: {prec}, Recall: {rec}, F1: {output}")
     return output 
 
 def metrics_summary(y_true,y_predicted):
