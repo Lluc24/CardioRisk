@@ -87,15 +87,17 @@ def get_initial_data(dataset_path: str) -> tuple[np.ndarray, np.ndarray, np.ndar
 
     return x_train, x_test, y_train, train_ids, test_ids
 
-def filter_thresholded_columns(threshold: float, x_train: np.ndarray, x_test: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def filter_thresholded_columns(threshold: float, x_train: np.ndarray, x_test: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     nan_means = np.mean(np.isnan(x_train), axis=0)
     filtered_x_train = x_train[:, nan_means < threshold]
     filtered_x_test = x_test[:, nan_means < threshold]
-    return filtered_x_train, filtered_x_test
+    column_ids=np.array(np.linspace(0,(x_train.shape[1]-1),x_train.shape[1]))
+    filtered_column_ids=column_ids[nan_means < threshold]
+    return filtered_x_train, filtered_x_test, filtered_column_ids
 
-def get_thresholded_data(dataset_path: str, threshold: float) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def get_thresholded_data(dataset_path: str, threshold: float) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     x_train, x_test, y_train, train_ids, test_ids = load_csv_data(dataset_path)
-    x_train, x_test = filter_thresholded_columns(threshold, x_train, x_test)
+    x_train, x_test, columns_ids = filter_thresholded_columns(threshold, x_train, x_test)
     x_train, x_test = remove_homogeneous_columns(x_train, x_test)
 
     # x_train
@@ -108,7 +110,7 @@ def get_thresholded_data(dataset_path: str, threshold: float) -> tuple[np.ndarra
     x_test = standardize(x_test)
     x_test = add_intercept_column(x_test)
 
-    return x_train, x_test, y_train, train_ids, test_ids
+    return x_train, x_test, y_train, train_ids, test_ids, columns_ids
 
 
 
