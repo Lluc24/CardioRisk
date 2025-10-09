@@ -3,6 +3,8 @@
 import csv
 import numpy as np
 import os
+import pathlib
+import datetime
 
 
 def load_csv_data(data_path, sub_sample=False):
@@ -48,8 +50,20 @@ def load_csv_data(data_path, sub_sample=False):
 
     return x_train, x_test, y_train, train_ids, test_ids
 
+def unique_name(func):
+    dir = pathlib.Path("submissions")
+    dir.mkdir(exist_ok=True)
+    def wrapper(*args, **kwargs):
+        if "name" in kwargs:
+            name = kwargs.pop("name")
+        else:
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            name = str(dir / f"submission_{timestamp}.csv")
+        return func(*args, name=name, **kwargs)
+    return wrapper
 
-def create_csv_submission(ids, y_pred, name):
+@unique_name
+def create_csv_submission(ids, y_pred, *, name):
     """
     This function creates a csv file named 'name' in the format required for a submission in Kaggle or AIcrowd.
     The file will contain two columns the first with 'ids' and the second with 'y_pred'.
@@ -70,3 +84,5 @@ def create_csv_submission(ids, y_pred, name):
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
+
+
