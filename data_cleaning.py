@@ -1,8 +1,12 @@
+from typing import Callable
+from helpers import process_metadata
 import numpy as np
 import csv
 import os
 from helpers import load_csv_data
-import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def set_nans_to(data: np.ndarray, value: float) -> np.ndarray:
     """Set NaN values in the input data to a specified value.
@@ -24,11 +28,6 @@ def add_intercept_column(x: np.ndarray) -> np.ndarray:
 
     Returns:
         numpy array with an added intercept column, shape=(num_samples, num_features + 1)
-
-    >>> add_intercept_column(np.array([[1, 2], [3, 4], [5, 6]]))
-    array([[1., 1., 2.],
-           [1., 3., 4.],
-           [1., 5., 6.]])
     """
     num_samples: int = x.shape[0]
     intercept: np.ndarray = np.ones((num_samples, 1))
@@ -43,18 +42,13 @@ def remove_homogeneous_columns(x_train: np.ndarray, x_test: np.ndarray) -> tuple
 
 
 def standardize(x: np.ndarray) -> np.ndarray:
-    """Stadartize the input data x
+    """Standardize the input data x
 
     Args:
         x: numpy array of shape=(num_samples, num_features)
 
     Returns:
-        standartized data, shape=(num_samples, num_features)
-
-    >>> standardize(np.array([[1, 2], [3, 4], [5, 6]]))
-    array([[-1.22474487, -1.22474487],
-           [ 0.        ,  0.        ],
-           [ 1.22474487,  1.22474487]])
+        standardized data, shape=(num_samples, num_features)
     """
     means: np.ndarray = np.mean(x, axis=0)
     stds: np.ndarray = np.std(x, axis=0)
@@ -65,6 +59,7 @@ def get_headers(dataset_path: str) -> list[str]:
     with open(os.path.join(dataset_path, "x_train.csv"), 'r') as file:
         reader = csv.reader(file)
         headers = next(reader)
+    headers = headers[1:]  # Remove the 'id' column
     return headers
 
 def get_initial_data(dataset_path: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -113,111 +108,84 @@ def get_thresholded_data(dataset_path: str, threshold: float) -> tuple[np.ndarra
 
 def get_data_columns(dataset_path: str, start: int, end: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     x_train, x_test, y_train, train_ids, test_ids = load_csv_data(dataset_path)
-
     x_train = x_train[:, start:end]
     x_test = x_test[:, start:end]
-
-    x_train = set_nans_to(x_train, 0)
-    x_test = set_nans_to(x_test, 0)
-
-    x_train, x_test = remove_homogeneous_columns(x_train, x_test)
-
-    x_train = standardize(x_train)
-    x_test = standardize(x_test)
-
-    x_train = add_intercept_column(x_train)
-    x_test = add_intercept_column(x_test)
-
     return x_train, x_test, y_train, train_ids, test_ids
 
-def cleaning_pipeline(dataset_path: str, metadata="dataset_metadata.json") -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def cleaning_pipeline(dataset_path: str, metadata: str = "dataset_metadata.json") -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     x_train, x_test, y_train, train_ids, test_ids = load_csv_data(dataset_path)
     headers: list[str] = get_headers(dataset_path)
+    metadata = process_metadata(metadata, headers)
+    x_train = x_train[:, :len(metadata)]
+    x_test = x_test[:, :len(metadata)]
+    headers = headers[:len(metadata)]
+    logger.info(f"Loaded data with {len(headers)} features")
 
-    x_train = clean_x_data(x_train, headers, metadata)
-    x_test = clean_x_data(x_test, headers, metadata)
-
-
-
+    x_train, x_test = clean_data(x_train, x_test, headers, metadata)
     return x_train, x_test, y_train, train_ids, test_ids
 
-def read_json(path: str) ->  dict:
-    with open(path, 'r') as f:
-        data = json.load(f)
-    return data
-
-def clean_x_data(x: np.ndarray, headers: list[str], metadata_path: str) -> np.ndarray:
-    metadata = read_json(metadata_path)
-    irrelevant_features = metadata["irrelevant_features"]
-    few_values_features = metadata["few_values_features"]
-    categorical_features = metadata["categorical_features"]
-    pseudo_categorical_features = metadata["pseudo_categorical_features"]
-
-    x, headers = clean_irrelevant_features(x, headers, irrelevant_features)
-    x, headers = clean_few_values_features(x, headers, few_values_features)
-    x = clean_categorical_features(x, headers, categorical_features)
-    x = clean_continuous_features(x, headers, pseudo_categorical_features)
-
-    x = standardize(x)
-    x = add_intercept_column(x)
-    return x
-
-def clean_irrelevant_features(x: np.ndarray, headers: list[str], irrelevant_features: list[dict]) -> np.ndarray:
-    for feature in irrelevant_features:
+def clean_data(x_train: np.ndarray, x_test: np.ndarray, headers: list[str], metadata: list[dict]) -> tuple[np.ndarray, np.ndarray]:
+    categorical_start = 0
+    for feature in metadata:
         id = feature["id"]
         index = headers.index(id)
-        headers.pop(index)
-        x = np.delete(x, index, axis=1)
-    return x
+        logger.info(f"Processing feature {id}")
 
-def clean_few_values_features(x: np.ndarray, headers: list[str], few_values_features: list[dict]) -> np.ndarray:
-    for feature in few_values_features:
-        id = feature.pop("id")
-        index = headers.index(id)
+        if feature["type"] == "delete":
+            x_train = np.delete(x_train, index, axis=1)
+            x_test = np.delete(x_test, index, axis=1)
+            headers.pop(index)
+            logger.info(f"Deleted feature {id}, new shape: {x_train.shape}")
+        elif feature["type"] == "continuous":
+            x_train, x_test = solve_mapping(x_train, x_test, feature, index)
+            categorical_start += 1
+            logger.info(f"Processed continuous feature {id}, new shape: {x_train.shape}, now {categorical_start} categorical features processed")
+        elif feature["type"] == "categorical":
+            x_train, x_test = solve_mapping(x_train, x_test, feature, index)
+            x_train, x_test = one_hot_encoding(x_train, x_test, feature, index)
+            headers.pop(index)
+            logger.info(f"Processed categorical feature {id}, new shape: {x_train.shape}")
 
-        num_nan_values = np.sum(np.isnan(x[:, index]))
-        if x.shape[1] - num_nan_values != feature["values"]:
-            raise ValueError(f"Feature {id} does not have {feature['values']} non-NaN values")
+    x_train, x_test = remove_homogeneous_columns(x_train, x_test)
+    updated = []
+    for x in (x_train, x_test):
+        x[:, :categorical_start] = standardize(x[:, :categorical_start])
+        x = add_intercept_column(x)
+        updated.append(x)
+    logger.info(f"Standardized columns 0 to {categorical_start - 1} and added intercept column, final shape: {x_train.shape}")
+    logger.info(f"Finished cleaning data")
+    return updated[0], updated[1]
 
-        x = np.delete(x, index, axis=1)
-    return x
+def solve_mapping(x_train: np.ndarray, x_test: np.ndarray, feature: dict, column_index: int) -> tuple[np.ndarray, np.ndarray]:
+    if "mapping" in feature:
+        mapping = feature["mapping"]
+        for col in (x_train[:, column_index], x_test[:, column_index]):
+            for [key, value] in mapping:
+                mask = np.isnan(col) if np.isnan(key) else col == key
 
-def clean_categorical_features(x: np.ndarray, headers: list[str], categorical_features: list[dict]) -> np.ndarray:
-    for feature in categorical_features:
-        id: str = feature["id"]
-        index: int = headers.index(id)
+                if value == "mean":
+                    mean_value = np.nanmean(col)
+                    col[mask] = mean_value
+                    logger.info(f"Mapping feature {feature['id']} value {key} to mean value {mean_value}")
+                else:
+                    col[mask] = value
+                    logger.info(f"Mapping feature {feature['id']} value {key} to {value}")
+    return x_train, x_test
 
-        if "mapping" in feature:
-            mapping: dict = feature["mapping"]
-            x = solve_mapping(x, index, mapping)
-        x = one_hot_encode_column(x, index)
-    return x
-
-def clean_continuous_features(x: np.ndarray, headers: list[str], continuous_features: list[dict]) -> np.ndarray:
-    for feature in continuous_features:
-        id: str = feature["id"]
-        index: int = headers.index(id)
-
-        if "mapping" in feature:
-            mapping: dict = feature["mapping"]
-            x = solve_mapping(x, index, mapping)
-    return x
-
-def encode_as_nan(x: np.ndarray, column_index: int, values: list[float]) -> np.ndarray:
-    for value in values:
-        x[:, column_index] = np.where(x[:, column_index] == value, np.nan, x[:, column_index])
-    return x
-
-def solve_mapping(x: np.ndarray, column_index: int, mapping: dict) -> np.ndarray:
-    col = x[:, column_index]
-    for key, value in mapping.items():
-        mask = np.isnan(col) if key == "NaN" else col == float(key)
-        col[mask] =  np.nan if value == "NaN" else value
-    return x
-
-def one_hot_encode_column(x: np.ndarray, column_index: int) -> np.ndarray:
-    unique_values, inverse = np.unique(x[:, column_index], return_inverse=True)  # unique values are sorted in ascending order, where NaNs are placed at the end
-    one_hot = np.eye(len(unique_values))[inverse]
-    x = np.delete(x, column_index, axis=1)
-    x = np.hstack((x, one_hot))
-    return x
+def one_hot_encoding(x_train: np.ndarray, x_test: np.ndarray, feature: dict, column_index: int) -> tuple[np.ndarray, np.ndarray]:
+    vocabulary: np.ndarray = feature["vocabulary"]
+    logger.info(f"One-hot encoding feature {feature['id']} with vocabulary (len={len(vocabulary)}) {vocabulary}")
+    updated = []
+    for x in (x_train, x_test):
+        unique = np.unique(x[:, column_index])
+        included: Callable = lambda x: np.any(np.isnan(vocabulary)) if np.isnan(x) else x in vocabulary
+        if not all(map(included, unique)):
+            raise ValueError(f"Feature {feature['id']} contains values not in the vocabulary: {unique[~np.isin(unique, vocabulary)]}")
+        inverse: np.ndarray = np.searchsorted(vocabulary, x[:, column_index])
+        one_hot: np.ndarray = np.eye(len(vocabulary))[inverse]
+        logger.info(f"One-hot encoded feature {feature['id']} into shape {one_hot.shape}")
+        x = np.delete(x, column_index, axis=1)
+        x = np.hstack((x, one_hot))
+        updated.append(x)
+    logger.info(f"One-hot encoding completed for feature {feature['id']}, new shape: {x_train.shape}")
+    return updated[0], updated[1]

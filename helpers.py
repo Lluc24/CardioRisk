@@ -5,6 +5,11 @@ import numpy as np
 import os
 import pathlib
 import datetime
+import json
+from typing import List
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def load_csv_data(data_path, sub_sample=False):
@@ -50,9 +55,11 @@ def load_csv_data(data_path, sub_sample=False):
 
     return x_train, x_test, y_train, train_ids, test_ids
 
+
 def unique_name(func):
     dir = pathlib.Path("submissions")
     dir.mkdir(exist_ok=True)
+
     def wrapper(*args, **kwargs):
         if "name" in kwargs:
             name = kwargs.pop("name")
@@ -60,7 +67,9 @@ def unique_name(func):
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             name = str(dir / f"submission_{timestamp}.csv")
         return func(*args, name=name, **kwargs)
+
     return wrapper
+
 
 @unique_name
 def create_csv_submission(ids, y_pred, *, name):
@@ -86,3 +95,77 @@ def create_csv_submission(ids, y_pred, *, name):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
 
 
+def process_metadata(json_path: str, headers: List[str]) -> List[dict]:
+    """
+    Loads and validates the dataset metadata JSON file.
+    Ensures each feature has 'id', 'description', and 'type'.
+    Checks all ids are in headers.
+    Validates and converts mappings: numbers to float, 'NaN' to np.nan, 'mean' to 'mean'.
+    Returns the processed metadata as a list of dicts.
+    Raises ValueError on validation failure.
+    """
+    with open(json_path, "r") as f:
+        metadata = json.load(f)
+    check_all_leaf_strings(metadata)
+
+    ids = set()
+    for feature in metadata:
+        # Check required fields
+        if not all(map(lambda x: x in feature, ("id", "description", "type"))):
+            raise ValueError(f"Feature missing required fields {feature}")
+        # Check correct type
+        if feature["type"] not in ("continuous", "categorical", "delete"):
+            raise ValueError(f"Feature '{feature['id']}' has invalid type '{feature['type']}'")
+        # If type is categorical, check and process the vocabulary field
+        if feature["type"] == "categorical":
+            if "vocabulary" not in feature or not isinstance(feature["vocabulary"], list):
+                raise ValueError(f"Feature '{feature['id']}' of type 'categorical' must have a 'vocabulary' field as a list.")
+
+            vocabulary = np.array([np.nan if v == "NaN" else float(v) for v in feature["vocabulary"]])
+            if len(vocabulary) != len(set(feature["vocabulary"])):
+                raise ValueError(f"Vocabulary for feature {feature['id']} contains duplicate values: {feature["vocabulary"]}")
+            if not np.array_equal(vocabulary, np.sort(vocabulary), equal_nan=True):
+                raise ValueError(f"Vocabulary for feature {feature['id']} is not sorted in ascending order. Note that NaNs should be at the end.")
+            feature["vocabulary"] = vocabulary
+
+        # Check for duplicate ids
+        if feature["id"] in ids:
+            raise ValueError(f"Duplicate feature id found: '{feature['id']}'")
+        ids.add(feature["id"])
+        # Check id in headers
+        if feature["id"] not in headers:
+            raise ValueError(f"Feature id '{feature['id']}' not found in headers.")
+        # Validate mapping if present
+        if "mapping" in feature:
+            mapping = feature["mapping"]
+            if not isinstance(mapping, list):
+                raise ValueError(f"Mapping for feature '{feature['id']}' is not a list.")
+            for pair in mapping:
+                if not (isinstance(pair, list) and len(pair) == 2):
+                    raise ValueError(f"Mapping entry {pair} in feature '{feature['id']}' is not a two-element list.")
+                for i, elem in enumerate(pair):
+                    if pair[i] != "mean":
+                        pair[i] = np.nan if elem == "NaN" else float(elem)
+
+    pending_features = set(headers) - ids
+    if pending_features:
+        logger.info(f"Still pending the features {pending_features}")
+    logger.info(f"Processing metadata for {len(ids)} ids: {ids}")
+    return metadata
+
+
+def check_all_leaf_strings(obj, path=None):
+    """
+    Recursively checks that all dict keys and leaf values in a nested structure are strings.
+    Raises ValueError with the path to the offending value if not.
+    """
+    path = path or []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            check_all_leaf_strings(k, path)
+            check_all_leaf_strings(v, path + [str(k)])
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            check_all_leaf_strings(v, path + [f"[{i}]"])
+    elif not isinstance(obj, str):
+        raise ValueError(f"Non-string leaf at {'.'.join(path)}: {repr(obj)} (type {type(obj).__name__})")
