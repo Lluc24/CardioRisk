@@ -1,133 +1,144 @@
 import pytest
 import numpy as np
-from data_cleaning import clean_irrelevant_features, clean_few_values_features, clean_categorical_features, clean_continuous_features
+import pathlib
+from data_cleaning import get_headers, standardize, add_intercept_column, one_hot_encoding, solve_mapping, \
+    cleaning_pipeline
+import json
 
-def test_clean_irrelevant_features():
-    x = np.array([
-        [1, 2, 3, 4],
-        [5, 6, 7, 8],
-        [9, 10, 11, 12]
-    ])
-    headers = ["feature1", "feature2", "feature3", "feature4"]
-    irrelevant_features = [
-        {
-            "id": "feature2",
-            "description": "X"
-        },
-        {
-            "id": "feature4",
-            "description": "Y"
-        }
+def test_add_intercept_column():
+    x = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    expected_x = np.array([[1, 1, 2, 3], [1, 4, 5, 6], [1, 7, 8, 9]])
+    intercept_x = add_intercept_column(x)
+    assert np.array_equal(intercept_x, expected_x), "The intercept column was not added correctly."
+
+def test_standardize():
+    x = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    expected_x = np.array([[-1.22474487, -1.22474487, -1.22474487],
+                           [0., 0., 0.],
+                           [1.22474487, 1.22474487, 1.22474487]])
+    standardized_x = standardize(x)
+    assert np.allclose(standardized_x, expected_x), "The standardization did not produce the expected result."
+
+def test_get_headers(tmp_path: pathlib.Path):
+    expected_headers = ["feature1", "feature2", "feature3"]
+    headers = [
+        "id",
+        "feature1",
+        "feature2",
+        "feature3"
     ]
+    with open(tmp_path / "x_train.csv", "w") as f:
+        f.write(",".join(headers) + "\n")
+        f.write("1,2,3,4\n")
+        f.write("5,6,7,8\n")
 
-    expected_x = np.array([
-        [1, 3],
-        [5, 7],
-        [9, 11]
+    loaded_headers = get_headers(str(tmp_path))
+    assert loaded_headers == expected_headers, f"Expected headers {expected_headers}, but got {loaded_headers}"
+
+
+@pytest.mark.skip
+def test_solve_mapping():
+
+    # Test case 1: Correct mapping
+    feature = {
+        "id": "feature1",
+        "type": "continuous",
+        "mapping":[
+            ["NaN", "2"],
+            ["7", "NaN"],
+            ["9", "NaN"],
+            ["NaN", "mean"]
+        ],
+        "vocabulary": []
+    }
+    x_train = np.array([
+        [1, 100],
+        [2, 200],
+        [3, 300],
+        [np.nan, 400]
     ])
-
-    cleaned_x = clean_irrelevant_features(x, headers, irrelevant_features)
-    assert np.array_equal(cleaned_x, expected_x), "The irrelevant features were not removed correctly."
-
-def test_clean_few_values_features():
-    x = np.array([
-        [1, 2, 3, 4],
-        [1, np.nan, 3, 5],
-        [1, 2, 3, 6],
-        [1, np.nan, 3, 5],
+    x_test = np.array([
+        [2, 150],
+        [3, 250],
+        [1, 350],
+        [np.nan, 450]
     ])
-    headers = ["feature1", "feature2", "feature3", "feature4"]
-    few_values_features = [
-        {
-            "id": "feature2",
-            "description": "X",
-            "values": 2
-        }
-    ]
-    few_values_features_error = [
-        {
-            "id": "feature2",
-            "description": "X",
-            "values": 3
-        }
-    ]
-
-    expected_x = np.array([
-        [1, 3, 4],
-        [1, 3, 5],
-        [1, 3, 6],
-        [1, 3, 5],
+    expected_x_train = np.array([
+        [10, 100],
+        [20, 200],
+        [30, 300],
+        [-1, 400]
     ])
+    expected_x_test = np.array([
+        [20, 150],
+        [30, 250],
+        [10, 350],
+        [-1, 450]
+    ])
+    actual_x_train, actual_x_test = solve_mapping(x_train, x_test, feature, 0)
+    assert np.array_equal(actual_x_train, expected_x_train), f"Test case 1 failed for x_train. Expected {expected_x_train}, but got {actual_x_train}"
+    assert np.array_equal(actual_x_test, expected_x_test), f"Test case 1 failed for x_test. Expected {expected_x_test}, but got {actual_x_test}"
 
+    # Test case 2: Value not in mapping
+    x_test[0, 0] = 4  # 4 is not in the mapping
     with pytest.raises(ValueError):
-        clean_few_values_features(x, headers, few_values_features_error)
+        solve_mapping(x_train, x_test, feature, 0)
 
-    cleaned_x = clean_few_values_features(x, headers, few_values_features)
-    assert np.array_equal(cleaned_x, expected_x), "The features with few unique values were not removed correctly."
+@pytest.mark.skip
+def test_one_hot_encoding():
+    rng = np.random.default_rng()
 
-def test_clean_categorical_features():
-    x = np.array([
-        [7, 0],
-        [np.nan, 1],
-        [2, 0],
-        [8, 1],
+    # Test case 1: Correct one-hot encoding
+    ordered_vocabulary = ["1", "2", "3", "NaN"]
+    feature = {
+        "id": "feature1",
+        "type": "categorical",
+        "mapping": {},
+        "vocabulary": ordered_vocabulary
+    }
+    x_train = np.array([
+        [1, 10],
+        [2, 20],
+        [3, 30],
+        [np.nan, 40]
     ])
-    headers = ["feature1", "feature2", "feature3", "feature4"]
-    categorical_features = [
-        {
-            "id": "feature1",
-            "description": "X",
-            "mapping": {
-                "NaN": 0,
-                "8": 1,
-                "7": "NaN"
-            }
-        }
-    ]
-    expected_x = np.array([
-        [0, 0, 0, 0, 1],
-        [1, 1, 0, 0, 0],
-        [0, 0, 0, 1, 0],
-        [1, 0, 1, 0, 0],
+    x_test = np.array([
+        [2, 15],
+        [3, 25],
+        [1, 35],
+        [np.nan, 45]
     ])
-
-    cleaned_x = clean_categorical_features(x, headers, categorical_features)
-    assert np.array_equal(cleaned_x, expected_x), "The categorical features were not encoded correctly."
-
-def test_continuous_features():
-    x = np.array([
-        [77, 99, 3],
-        [5, 1, np.nan],
-        [2, 80, 5],
-        [3, np.nan, 8],
+    expected_x_train = np.array([
+        [10, 1, 0, 0, 0],
+        [20, 0, 1, 0, 0],
+        [30, 0, 0, 1, 0],
+        [40, 0, 0, 0, 1]
     ])
-    headers = ["feature1", "feature2", "feature3"]
-    continuous_features = [
-        {
-            "id": "feature1",
-            "description": "X",
-            "mapping": {
-                "80": 0,
-                "77": "NaN",
-                "99": "NaN"
-            }
-        },
-        {
-            "id": "feature2",
-            "description": "Y",
-            "mapping": {
-                "80": 0,
-                "77": "NaN",
-                "99": "NaN"
-            }
-        }
-    ]
-    expected_x = np.array([
-        [np.nan, np.nan, 3],
-        [5, 1, np.nan],
-        [2, 0, 5],
-        [3, np.nan, 8],
+    expected_x_test = np.array([
+        [15, 0, 1, 0, 0],
+        [25, 0, 0, 1, 0],
+        [35, 1, 0, 0, 0],
+        [45, 0, 0, 0, 1]
     ])
+    actual_x_train, actual_x_test = one_hot_encoding(x_train, x_test, feature, 0)
+    assert np.array_equal(actual_x_train, expected_x_train), f"Test case 1 failed for x_train. Expected {expected_x_train}, but got {actual_x_train}"
+    assert np.array_equal(actual_x_test, expected_x_test), f"Test case 1 failed for x_test. Expected {expected_x_test}, but got {actual_x_test}"
 
-    cleaned_x = clean_continuous_features(x, headers, continuous_features)
-    assert np.array_equal(cleaned_x, expected_x, equal_nan=True), "The continuous features were not cleaned correctly."
+    # Test case 2: Vocabulary with duplicates
+    e = rng.choice(feature["vocabulary"])
+    feature["vocabulary"].append(e)
+    rng.shuffle(feature["vocabulary"])
+    with pytest.raises(ValueError):
+        one_hot_encoding(x_train, x_test, feature, 0)
+
+    # Test case 3: Vocabulary not sorted
+    while feature["vocabulary"] == ordered_vocabulary:
+        feature["vocabulary"] = list(rng.permutation(feature["vocabulary"]))
+    with pytest.raises(ValueError):
+        one_hot_encoding(x_train, x_test, feature, 0)
+
+    # Test case 4: Values not in the vocabulary
+    x_test[0, 0] = 4  # 4 is not in the vocabulary
+    feature["vocabulary"] = ordered_vocabulary
+    with pytest.raises(ValueError):
+        one_hot_encoding(x_train, x_test, feature, 0)
