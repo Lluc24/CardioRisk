@@ -7,5 +7,4 @@ PersonalThoughts/*
 env/
 .venv/
 venv/
-clean_arrays
 logging.log
