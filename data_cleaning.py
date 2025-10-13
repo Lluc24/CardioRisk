@@ -5,8 +5,21 @@ import csv
 import os
 from helpers import load_csv_data
 import logging
+import pathlib
+import datetime
+
+NUMPY_ARRAYS_DIR = "clean_arrays"
 
 logger = logging.getLogger(__name__)
+
+def save_arrays(**arrays) -> None:
+    p = pathlib.Path(NUMPY_ARRAYS_DIR)
+    p.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    for name, array in arrays.items():
+        array_path = p / f"{timestamp}_{name}.npy"
+        np.save(array_path, array)
+        logger.info(f"Saved {name} array to {array_path}")
 
 def set_nans_to(data: np.ndarray, value: float) -> np.ndarray:
     """Set NaN values in the input data to a specified value.
@@ -106,12 +119,6 @@ def get_thresholded_data(dataset_path: str, threshold: float) -> tuple[np.ndarra
 
     return x_train, x_test, y_train, train_ids, test_ids
 
-def get_data_columns(dataset_path: str, start: int, end: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    x_train, x_test, y_train, train_ids, test_ids = load_csv_data(dataset_path)
-    x_train = x_train[:, start:end]
-    x_test = x_test[:, start:end]
-    return x_train, x_test, y_train, train_ids, test_ids
-
 def cleaning_pipeline(dataset_path: str, metadata: str = "dataset_metadata.json") -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     x_train, x_test, y_train, train_ids, test_ids = load_csv_data(dataset_path)
     headers: list[str] = get_headers(dataset_path)
@@ -162,7 +169,6 @@ def solve_mapping(x_train: np.ndarray, x_test: np.ndarray, feature: dict, column
         for col in (x_train[:, column_index], x_test[:, column_index]):
             for [key, value] in mapping:
                 mask = np.isnan(col) if np.isnan(key) else col == key
-
                 if value == "mean":
                     mean_value = np.nanmean(col)
                     col[mask] = mean_value
