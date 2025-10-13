@@ -1,10 +1,13 @@
 from implementations import mean_squared_error_gd, predict_labels, least_squares
-from data_cleaning import get_initial_data, get_thresholded_data, get_data_columns, get_headers, cleaning_pipeline
+from data_cleaning import get_initial_data, get_thresholded_data, get_headers, cleaning_pipeline, save_arrays
 import numpy as np
 from helpers import create_csv_submission
 import logging
 import sys
 import pathlib
+
+DATASET_DIR = "dataset"
+METADATA_FILE = "dataset_metadata.json"
 
 def setup_logger():
     # Create formatter
@@ -37,30 +40,9 @@ def setup_logger():
     logger.info("The messages will go both to logging.log and stdout.")
     logger.info("Logger is set up.")
 
-if __name__ == 'x__main__':
+if __name__ == '__main__':
     setup_logger()
     x_train, x_test, y_train, train_ids, test_ids = cleaning_pipeline(dataset_path="dataset")
-    p = pathlib.Path("clean_arrays")
-    np.save(p / "x_train.npy", x_train)
-    np.save(p / "x_test.npy", x_test)
-    np.save(p / "y_train.npy", y_train)
-    np.save(p / "train_ids.npy", train_ids)
-    np.save(p / "test_ids.npy", test_ids)
-    w, loss = mean_squared_error_gd(y_train, x_train, initial_w=np.zeros(x_train.shape[1]), max_iters=1000, gamma=0.7)
-    logging.info(f"Loss (MSE) of the training set: {loss}")
-    y_pred = predict_labels(x_test, w)
-    create_csv_submission(test_ids, y_pred)
-    logging.info("Submission file created.")
-
-if __name__ == "__main__":
-    x_train = np.load("clean_arrays/x_train.npy")
-    x_test = np.load("clean_arrays/x_test.npy")
-    y_train = np.load("clean_arrays/y_train.npy")
-    train_ids = np.load("clean_arrays/train_ids.npy")
-    test_ids = np.load("clean_arrays/test_ids.npy")
-    w, loss = least_squares(y_train, x_train)
-    print("Loss (MSE) of the training set:", loss)
-    y_pred = predict_labels(x_test, w)
-    create_csv_submission(test_ids, y_pred)
+    save_arrays(x_train=x_train, x_test=x_test, y_train=y_train, train_ids=train_ids, test_ids=test_ids)
 
 

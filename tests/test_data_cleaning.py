@@ -36,65 +36,15 @@ def test_get_headers(tmp_path: pathlib.Path):
     assert loaded_headers == expected_headers, f"Expected headers {expected_headers}, but got {loaded_headers}"
 
 
-@pytest.mark.skip
-def test_solve_mapping():
-
-    # Test case 1: Correct mapping
-    feature = {
-        "id": "feature1",
-        "type": "continuous",
-        "mapping":[
-            ["NaN", "2"],
-            ["7", "NaN"],
-            ["9", "NaN"],
-            ["NaN", "mean"]
-        ],
-        "vocabulary": []
-    }
-    x_train = np.array([
-        [1, 100],
-        [2, 200],
-        [3, 300],
-        [np.nan, 400]
-    ])
-    x_test = np.array([
-        [2, 150],
-        [3, 250],
-        [1, 350],
-        [np.nan, 450]
-    ])
-    expected_x_train = np.array([
-        [10, 100],
-        [20, 200],
-        [30, 300],
-        [-1, 400]
-    ])
-    expected_x_test = np.array([
-        [20, 150],
-        [30, 250],
-        [10, 350],
-        [-1, 450]
-    ])
-    actual_x_train, actual_x_test = solve_mapping(x_train, x_test, feature, 0)
-    assert np.array_equal(actual_x_train, expected_x_train), f"Test case 1 failed for x_train. Expected {expected_x_train}, but got {actual_x_train}"
-    assert np.array_equal(actual_x_test, expected_x_test), f"Test case 1 failed for x_test. Expected {expected_x_test}, but got {actual_x_test}"
-
-    # Test case 2: Value not in mapping
-    x_test[0, 0] = 4  # 4 is not in the mapping
-    with pytest.raises(ValueError):
-        solve_mapping(x_train, x_test, feature, 0)
-
-@pytest.mark.skip
 def test_one_hot_encoding():
     rng = np.random.default_rng()
 
     # Test case 1: Correct one-hot encoding
-    ordered_vocabulary = ["1", "2", "3", "NaN"]
     feature = {
         "id": "feature1",
         "type": "categorical",
         "mapping": {},
-        "vocabulary": ordered_vocabulary
+        "vocabulary": [1, 2, 3, np.nan]
     }
     x_train = np.array([
         [1, 10],
@@ -124,21 +74,7 @@ def test_one_hot_encoding():
     assert np.array_equal(actual_x_train, expected_x_train), f"Test case 1 failed for x_train. Expected {expected_x_train}, but got {actual_x_train}"
     assert np.array_equal(actual_x_test, expected_x_test), f"Test case 1 failed for x_test. Expected {expected_x_test}, but got {actual_x_test}"
 
-    # Test case 2: Vocabulary with duplicates
-    e = rng.choice(feature["vocabulary"])
-    feature["vocabulary"].append(e)
-    rng.shuffle(feature["vocabulary"])
-    with pytest.raises(ValueError):
-        one_hot_encoding(x_train, x_test, feature, 0)
-
-    # Test case 3: Vocabulary not sorted
-    while feature["vocabulary"] == ordered_vocabulary:
-        feature["vocabulary"] = list(rng.permutation(feature["vocabulary"]))
-    with pytest.raises(ValueError):
-        one_hot_encoding(x_train, x_test, feature, 0)
-
     # Test case 4: Values not in the vocabulary
     x_test[0, 0] = 4  # 4 is not in the vocabulary
-    feature["vocabulary"] = ordered_vocabulary
     with pytest.raises(ValueError):
         one_hot_encoding(x_train, x_test, feature, 0)

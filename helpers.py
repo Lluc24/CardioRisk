@@ -124,9 +124,7 @@ def process_metadata(json_path: str, headers: List[str]) -> List[dict]:
             vocabulary = np.array([np.nan if v == "NaN" else float(v) for v in feature["vocabulary"]])
             if len(vocabulary) != len(set(feature["vocabulary"])):
                 raise ValueError(f"Vocabulary for feature {feature['id']} contains duplicate values: {feature["vocabulary"]}")
-            if not np.array_equal(vocabulary, np.sort(vocabulary), equal_nan=True):
-                raise ValueError(f"Vocabulary for feature {feature['id']} is not sorted in ascending order. Note that NaNs should be at the end.")
-            feature["vocabulary"] = vocabulary
+            feature["vocabulary"] = np.sort(vocabulary)
 
         # Check for duplicate ids
         if feature["id"] in ids:
