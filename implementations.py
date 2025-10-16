@@ -88,6 +88,51 @@ def ridge_regression(y, tx, lambda_):
     loss = mean_squared_error(y, tx, w)
     return w, loss
 
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    """Logistic regression using gradient descent.
+
+    Args:
+        y: numpy array of shape=(N, )
+        tx: numpy array of shape=(N, D)
+        initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
+        max_iters: a scalar denoting the total number of iterations of the method
+        gamma: a scalar denoting the stepsize
+    Returns:
+        w: The last weight vector of the method
+        loss: the value of the loss (logistic loss) using the last weight vector
+    """
+    w = initial_w
+    for _ in range(max_iters):
+        gradient = logistic_gradient(y, tx, w)
+        w = w - gamma * gradient
+
+    loss = logistic_loss(y, tx, w)
+    return w, loss
+
+
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    """Regularized logistic regression using gradient descent.
+
+    Args:
+        y: numpy array of shape=(N, )
+        tx: numpy array of shape=(N, D)
+        lambda_: scalar, regularization parameter
+        initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
+        max_iters: a scalar denoting the total number of iterations of the method
+        gamma: a scalar denoting the stepsize
+
+    Returns:
+        w: The last weight vector of the method
+        loss: the value of the loss (regularized logistic loss) using the last weight vector
+    """
+    w = initial_w
+    for _ in range(max_iters):
+        gradient = logistic_gradient(y, tx, w) + 2 * lambda_ * w
+        w = w - gamma * gradient
+
+    loss = logistic_loss(y, tx, w) + lambda_ * (w.T @ w)
+    return w, loss
+
 
 ########################################################################################3
 # Auxiliar Functions
@@ -197,3 +242,48 @@ def predict_labels(x: np.ndarray, w: np.ndarray) -> np.ndarray:
     y_pred = x @ w
     y_pred_labels = np.where(y_pred <= 0, -1, 1)
     return y_pred_labels
+
+def sigmoid(t: np.ndarray) -> np.ndarray:
+    """Apply the sigmoid function on t.
+
+    Args:
+        t: A scalar or numpy array of any size.
+
+    Returns:
+        The sigmoid of t.
+    """
+    return 1 / (1 + np.exp(-t))
+
+
+def logistic_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> float:
+    """Compute the cost by negative log likelihood.
+
+    Args:
+        y: numpy array of shape=(N, )
+        tx: numpy array of shape=(N, D)
+        w: numpy array of shape=(D, ). The vector of model parameters.
+
+    Returns:
+        The negative log likelihood.
+    """
+    t = tx @ w
+    loss = np.mean(-y * t + np.log(1 + np.exp(t)))
+    return loss.item()
+
+
+
+def logistic_gradient(y, tx, w):
+    """compute the gradient of loss.
+
+    Args:
+        y:  shape=(N, )
+        tx: shape=(N, D)
+        w:  shape=(D, )
+
+    Returns:
+        a vector of shape (D )
+    """
+    (N, ) = y.shape
+    s = sigmoid(tx@w)
+    gradient = 1 / N * tx.T @ (s - y)
+    return gradient
