@@ -6,20 +6,26 @@ import os
 from helpers import load_csv_data
 import logging
 import pathlib
-import datetime
 
 NUMPY_ARRAYS_DIR = "clean_arrays"
 
 logger = logging.getLogger(__name__)
 
-def save_arrays(**arrays) -> None:
+def save_arrays(x_train: np.ndarray, x_test: np.ndarray, num_cont_features: np.ndarray, y_train: np.ndarray, train_ids: np.ndarray, test_ids: np.ndarray) -> None:
+    arrays = (("x_train", x_train), ("x_test", x_test), ("num_cont_features", num_cont_features), ("y_train", y_train),
+              ("train_ids", train_ids), ("test_ids", test_ids))
     p = pathlib.Path(NUMPY_ARRAYS_DIR)
     p.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    for name, array in arrays.items():
-        array_path = p / f"{timestamp}_{name}.npy"
+    for name, array in arrays:
+        array_path = p / f"{name}.npy"
         np.save(array_path, array)
         logger.info(f"Saved {name} array to {array_path}")
+
+def load_arrays() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    names = ["x_train.npy", "x_test.npy", "num_cont_features.npy", "y_train.npy", "train_ids.npy", "test_ids.npy"]
+    p = pathlib.Path(NUMPY_ARRAYS_DIR)
+    arrays = tuple(np.load(p / name) for name in names)
+    return arrays
 
 def set_nans_to(data: np.ndarray, value: float) -> np.ndarray:
     """Set NaN values in the input data to a specified value.
@@ -121,20 +127,12 @@ def get_thresholded_data(dataset_path: str, threshold: float) -> tuple[np.ndarra
 
     return x_train, x_test, y_train, train_ids, test_ids, columns_ids
 
-def cleaning_pipeline(dataset_path: str, metadata: str = "dataset_metadata.json") -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def cleaning_pipeline(dataset_path: str, metadata_path: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     x_train, x_test, y_train, train_ids, test_ids = load_csv_data(dataset_path)
     headers: list[str] = get_headers(dataset_path)
-    metadata = process_metadata(metadata, headers)
-    x_train = x_train[:, :len(metadata)]
-    x_test = x_test[:, :len(metadata)]
-    headers = headers[:len(metadata)]
-    logger.info(f"Loaded data with {len(headers)} features")
+    metadata = process_metadata(metadata_path, headers)
 
-    x_train, x_test = clean_data(x_train, x_test, headers, metadata)
-    return x_train, x_test, y_train, train_ids, test_ids
-
-def clean_data(x_train: np.ndarray, x_test: np.ndarray, headers: list[str], metadata: list[dict]) -> tuple[np.ndarray, np.ndarray]:
-    categorical_start = 0
+    num_cont_features = 0
     for feature in metadata:
         id = feature["id"]
         index = headers.index(id)
@@ -147,8 +145,8 @@ def clean_data(x_train: np.ndarray, x_test: np.ndarray, headers: list[str], meta
             logger.info(f"Deleted feature {id}, new shape: {x_train.shape}")
         elif feature["type"] == "continuous":
             x_train, x_test = solve_mapping(x_train, x_test, feature, index)
-            categorical_start += 1
-            logger.info(f"Processed continuous feature {id}, new shape: {x_train.shape}, now {categorical_start} categorical features processed")
+            num_cont_features += 1
+            logger.info(f"Processed continuous feature {id}, new shape: {x_train.shape}, now {num_cont_features} continuous features processed")
         elif feature["type"] == "categorical":
             x_train, x_test = solve_mapping(x_train, x_test, feature, index)
             x_train, x_test = one_hot_encoding(x_train, x_test, feature, index)
@@ -156,14 +154,13 @@ def clean_data(x_train: np.ndarray, x_test: np.ndarray, headers: list[str], meta
             logger.info(f"Processed categorical feature {id}, new shape: {x_train.shape}")
 
     x_train, x_test = remove_homogeneous_columns(x_train, x_test)
-    updated = []
-    for x in (x_train, x_test):
-        x[:, :categorical_start] = standardize(x[:, :categorical_start])
-        x = add_intercept_column(x)
-        updated.append(x)
-    logger.info(f"Standardized columns 0 to {categorical_start - 1} and added intercept column, final shape: {x_train.shape}")
+    x_train[:, :num_cont_features] = standardize(x_train[:, :num_cont_features])
+    x_test[:, :num_cont_features] = standardize(x_test[:, :num_cont_features])
+    logger.info(f"Standardized columns 0 to {num_cont_features - 1}, final shape: {x_train.shape}")
     logger.info(f"Finished cleaning data")
-    return updated[0], updated[1]
+    num_cont_features = np.array(num_cont_features)
+
+    return x_train, x_test, num_cont_features, y_train, train_ids, test_ids
 
 def solve_mapping(x_train: np.ndarray, x_test: np.ndarray, feature: dict, column_index: int) -> tuple[np.ndarray, np.ndarray]:
     if "mapping" in feature:

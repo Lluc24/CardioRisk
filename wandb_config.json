@@ -1,0 +1,21 @@
+{
+    "method": "random",
+    "metric": {
+        "name": "loss",
+        "goal": "minimize"
+    },
+    "parameters": {
+        "gamma": {
+            "values": [0.1, 0.3, 0.5, 0.7, 0.9]
+        },
+        "max_iters": {
+            "values": [100]
+        },
+        "lambda_": {
+            "values": [0.001, 0.01, 0.1, 1.0]
+        },
+        "degree": {
+            "values": [2, 3, 5, 10]
+        }
+    }
+}

@@ -39,8 +39,9 @@ def f1(y_true,y_predicted):
     prec=precision(y_true,y_predicted)
     rec=tpr(y_true,y_predicted)
     output=2*(prec*rec)/(prec+rec)
+    output = 0 if np.isnan(output) else output
     print(f"f1 -> Precision: {prec}, Recall: {rec}, F1: {output}")
-    return output 
+    return output
 
 def metrics_summary(y_true,y_predicted):
     acc=accuracy(y_true,y_predicted)
