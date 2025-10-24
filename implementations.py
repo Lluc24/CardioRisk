@@ -1,4 +1,8 @@
 import numpy as np
+import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     """The Gradient Descent (GD) algorithm.
@@ -129,8 +133,11 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     for _ in range(max_iters):
         gradient = logistic_gradient(y, tx, w) + 2 * lambda_ * w
         w = w - gamma * gradient
-
-    loss = logistic_loss(y, tx, w) + lambda_ * (w.T @ w)
+        w_norm = np.linalg.norm(w)
+        loss = logistic_loss(y, tx, w) + lambda_ * w_norm ** 2
+        logger.info(json.dumps({"loss": loss}))
+        logger.info(json.dumps({"w_norm": w_norm}))
+    loss = logistic_loss(y, tx, w)
     return w, loss
 
 
@@ -231,7 +238,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         )  # The first data point of the following batch
         yield y[start_index:end_index], tx[start_index:end_index]
 
-def predict_labels(x: np.ndarray, w: np.ndarray) -> np.ndarray:
+def predict_labels_linear_reg(x: np.ndarray, w: np.ndarray) -> np.ndarray:
     """Generates class predictions given weights, and a test data matrix
     Args:
         x: numpy array of shape=(num_samples, num_features)
@@ -241,6 +248,13 @@ def predict_labels(x: np.ndarray, w: np.ndarray) -> np.ndarray:
     """
     y_pred = x @ w
     y_pred_labels = np.where(y_pred <= 0, -1, 1)
+    return y_pred_labels
+
+def predict_labels_logistic(x: np.ndarray, w: np.ndarray) -> np.ndarray:
+    g_x = x @ w
+    prob = sigmoid(g_x)
+    logger.info(json.dumps({"probabilities": prob.tolist()}))
+    y_pred_labels = np.where(prob >= 0.5, 1, 0)
     return y_pred_labels
 
 def sigmoid(t: np.ndarray) -> np.ndarray:
@@ -287,3 +301,19 @@ def logistic_gradient(y, tx, w):
     s = sigmoid(tx@w)
     gradient = 1 / N * tx.T @ (s - y)
     return gradient
+
+
+def build_poly(x: np.ndarray, degree: int) -> np.ndarray:
+    """Polynomial basis functions for input data x, for j=1 up to j=degree.
+
+    Args:
+        x: numpy array of shape=(num_samples, num_features)
+        degree: integer
+    Returns:
+        numpy array of shape=(num_samples, num_features*degree)
+    """
+    num_samples, num_features = x.shape
+    one_dim = x.reshape(-1)
+    poly = np.vander(one_dim, degree+1, increasing=True)[:, 1:]
+    poly = poly.reshape(num_samples, num_features * degree)
+    return poly

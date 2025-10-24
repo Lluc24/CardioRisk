@@ -61,18 +61,19 @@ def unique_name(func):
     dir.mkdir(exist_ok=True)
 
     def wrapper(*args, **kwargs):
+        prefix = kwargs.get("prefix", "")
         if "name" in kwargs:
             name = kwargs.pop("name")
         else:
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             name = str(dir / f"submission_{timestamp}.csv")
-        return func(*args, name=name, **kwargs)
+        return func(*args, name=name, prefix=prefix, **kwargs)
 
     return wrapper
 
 
 @unique_name
-def create_csv_submission(ids, y_pred, *, name):
+def create_csv_submission(ids, y_pred, *, name, prefix):
     """
     This function creates a csv file named 'name' in the format required for a submission in Kaggle or AIcrowd.
     The file will contain two columns the first with 'ids' and the second with 'y_pred'.

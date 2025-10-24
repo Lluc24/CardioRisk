@@ -1,0 +1,1912 @@
+[
+    {
+        "id": "_STATE",
+        "description": "State FIPS Code",
+        "type": "delete"
+    },
+    {
+        "id": "FMONTH",
+        "description": "File Month for Record Identification",
+        "type": "delete"
+    },
+    {
+        "id": "IDATE",
+        "description": "Interview Date",
+        "type": "delete"
+    },
+    {
+        "id": "IMONTH",
+        "description": "Interview Month",
+        "type": "delete"
+    },
+    {
+        "id": "IDAY",
+        "description": "Interview Day of Month",
+        "type": "delete"
+    },
+    {
+        "id": "IYEAR",
+        "description": "Interview Year",
+        "type": "delete"
+    },
+    {
+        "id": "DISPCODE",
+        "description": "Final Disposition (finished the interview completely or partially)",
+        "type": "delete"
+    },
+    {
+        "id": "SEQNO",
+        "description": "Annual Sequence Number",
+        "type": "delete"
+    },
+    {
+        "id": "_PSU",
+        "description": "Primary Sampling Unit (Equal to Annual Sequence Number)",
+        "type": "delete"
+    },
+    {
+        "id": "CTELENUM",
+        "description": "Correct Telephone Number?",
+        "type": "delete"
+    },
+    {
+        "id": "PVTRESD1",
+        "description": "Is this a private residence?",
+        "type": "delete"
+    },
+    {
+        "id": "COLGHOUS",
+        "description": "Do you live in college housing?",
+        "type": "delete"
+    },
+    {
+        "id": "STATERES",
+        "description": "Do you reside in ____(state)____?",
+        "type": "delete"
+    },
+    {
+        "id": "CELLFON3",
+        "description": "Is this a cellular telephone?",
+        "type": "delete"
+    },
+    {
+        "id": "LADULT",
+        "description": "Are you 18 years of age or older?",
+        "type": "delete",
+        "note": "It only has 45 non NaN values"
+    },
+    {
+        "id": "NUMADULT",
+        "description": "Number of Adults in Household",
+        "type": "delete"
+    },
+    {
+        "id": "NUMMEN",
+        "description": "Number of Adult Men in Household",
+        "type": "delete"
+    },
+    {
+        "id": "NUMWOMEN",
+        "description": "Number of Adult Women in Household",
+        "type": "delete"
+    },
+    {
+        "id": "CTELNUM1",
+        "description": "Is this (phone number) ?",
+        "type": "delete"
+    },
+    {
+        "id": "CELLFON2",
+        "description": "Is this a cellular telephone?",
+        "type": "delete"
+    },
+    {
+        "id": "CADULT",
+        "description": "Are you 18 years of age or older? Answers: Yes, Male respondant 0.21 / Yes, Female respondant 0.21 / Blank 0.58",
+        "type": "delete"
+    },
+    {
+        "id": "PVTRESD2",
+        "description": "Do you live in a private residence, that is, not in a dormitory or other type of group living situation?",
+        "type": "delete"
+    },
+    {
+        "id": "CCLGHOUS",
+        "description": "Do you live in college housing?",
+        "type": "delete"
+    },
+    {
+        "id": "CSTATE",
+        "description": "Are you a resident of [STATE]?",
+        "type": "delete"
+    },
+    {
+        "id": "LANDLINE",
+        "description": "Do you also have a landline telephone in your home that is used to make and receive calls?",
+        "type": "delete"
+    },
+    {
+        "id": "HHADULT",
+        "description": "How many members of your household, including yourself, are 18 years of age or older?",
+        "type": "delete"
+    },
+    {
+        "id": "GENHLTH",
+        "description": "Would you say that in general your health is",
+        "mapping": [
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "NaN"
+        ]
+    },
+    {
+        "id": "PHYSHLTH",
+        "description": "Now thinking about your physical health, which includes physical illness and injury, for how many days during the past 30 days was your physical health not good?",
+        "mapping": [
+            [
+                "80",
+                "0"
+            ],
+            [
+                "77",
+                "NaN"
+            ],
+            [
+                "99",
+                "NaN"
+            ],
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
+    },
+    {
+        "id": "MENTHLTH",
+        "description": "Now thinking about your mental health, which includes stress, depression, and problems with emotions, for how many days during the past 30 days was your mental health not good?",
+        "mapping": [
+            [
+                "80",
+                "0"
+            ],
+            [
+                "77",
+                "NaN"
+            ],
+            [
+                "99",
+                "NaN"
+            ],
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
+    },
+    {
+        "id": "POORHLTH",
+        "description": "During the past 30 days, for about how many days did poor physical or mental health keep you from doing your usual activities, such as self-care, work, or recreation?",
+        "mapping": [
+            [
+                "80",
+                "0"
+            ],
+            [
+                "77",
+                "NaN"
+            ],
+            [
+                "99",
+                "NaN"
+            ],
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
+    },
+    {
+        "id": "HLTHPLN1",
+        "description": "Do you have any kind of health care coverage, including health insurance, prepaid plans such as HMOs, or government plans such as Medicare, or Indian Health Service?",
+        "mapping": [
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "NaN"
+        ]
+    },
+    {
+        "id": "PERSDOC2",
+        "description": "Do you have one person you think of as your personal doctor or health care provider? (If \"No\" ask \"Is there more than one or is there no person who you think of as your personal doctor or health care provider?\".)",
+        "mapping": [
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "3",
+            "NaN"
+        ]
+    },
+    {
+        "id": "MEDCOST",
+        "description": "Was there a time in the past 12 months when you needed to see a doctor but could not because of cost?",
+        "mapping": [
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "NaN"
+        ]
+    },
+    {
+        "id": "CHECKUP1",
+        "description": "About how long has it been since you last visited a doctor for a routine checkup? [A routine checkup is a general physical exam, not an exam for a specific injury, illness, or condition.]",
+        "mapping": [
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "8",
+            "NaN"
+        ]
+    },
+    {
+        "id": "BPHIGH4",
+        "description": "Have you EVER been told by a doctor, nurse or other health professional that you have high blood pressure? (If \"Yes\" and respondent is female, ask \"Was this only when you were pregto_NaNt?\".)",
+        "mapping": [
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "NaN"
+        ]
+    },
+    {
+        "id": "BPMEDS",
+        "description": "Are you currently taking medicine for your high blood pressure?",
+        "mapping": [
+            [
+                "NaN",
+                "2"
+            ],
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "NaN"
+        ]
+    },
+    {
+        "id": "BLOODCHO",
+        "description": "Blood cholesterol is a fatty substance found in the blood. Have you EVER had your blood cholesterol checked?",
+        "mapping": [
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "NaN"
+        ]
+    },
+    {
+        "id": "CHOLCHK",
+        "description": "About how long has it been since you last had your blood cholesterol checked?",
+        "mapping": [
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "NaN"
+        ]
+    },
+    {
+        "id": "TOLDHI2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CVDSTRK3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASTHMA3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASTHNOW",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CHCSCNCR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CHCOCNCR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CHCCOPD1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HAVARTH3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADDEPEV2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CHCKIDNY",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DIABETE3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DIABAGE2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SEX",
+        "description": "Indicate sex of respondent",
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2"
+        ]
+    },
+    {
+        "id": "MARITAL",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EDUCA",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "RENTHOM1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "NUMHHOL2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "NUMPHON2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CPDEMO1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VETERAN3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EMPLOY1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CHILDREN",
+        "description": "How many children less than 18 years of age live in your household?",
+        "mapping": [
+            [
+                "88",
+                "0"
+            ],
+            [
+                "99",
+                "NaN"
+            ],
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
+    },
+    {
+        "id": "INCOME2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "INTERNET",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "WEIGHT2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HEIGHT3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PREGNANT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "QLACTLM2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "USEEQUIP",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "BLIND",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DECIDE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DIFFWALK",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DIFFDRES",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DIFFALON",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SMOKE100",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SMOKDAY2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "STOPSMK2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "LASTSMK2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "USENOW3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ALCDAY5",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "AVEDRNK2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DRNK3GE5",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "MAXDRNKS",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FRUITJU1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FRUIT1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FVBEANS",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FVGREEN",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FVORANG",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VEGETAB1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EXERANY2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EXRACT11",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EXEROFT1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EXERHMM1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EXRACT21",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EXEROFT2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EXERHMM2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "STRENGTH",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "LMTJOIN3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ARTHDIS2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ARTHSOCL",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "JOINPAIN",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SEATBELT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FLUSHOT6",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FLSHTMY2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "IMFVPLAC",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PNEUVAC3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HIVTST6",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HIVTSTD3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "WHRTST10",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PDIABTST",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PREDIAB1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "INSULIN",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "BLDSUGAR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FEETCHK2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DOCTDIAB",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CHKHEMO3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FEETCHK",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EYEEXAM",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DIABEYE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DIABEDU",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CAREGIV1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CRGVREL1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CRGVLNG1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CRGVHRS1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CRGVPRB1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CRGVPERS",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CRGVHOUS",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CRGVMST2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CRGVEXPT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VIDFCLT2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VIREDIF3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VIPRFVS2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VINOCRE2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VIEYEXM2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VIINSUR2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VICTRCT4",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VIGLUMA2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VIMACDG2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CIMEMLOS",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CDHOUSE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CDASSIST",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CDHELP",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CDSOCIAL",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CDDISCUS",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "WTCHSALT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "LONGWTCH",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DRADVISE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASTHMAGE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASATTACK",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASERVIST",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASDRVIST",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASRCHKUP",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASACTLIM",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASYMPTOM",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASNOSLEP",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASTHMED3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASINHALR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HAREHAB1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "STREHAB1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CVDASPRN",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ASPUNSAF",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "RLIVPAIN",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "RDUCHART",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "RDUCSTRK",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ARTTODAY",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ARTHWGT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ARTHEXER",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ARTHEDU",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "TETANUS",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HPVADVC2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HPVADSHT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SHINGLE2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HADMAM",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HOWLONG",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HADPAP2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "LASTPAP2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HPVTEST",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HPLSTTST",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HADHYST2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PROFEXAM",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "LENGEXAM",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "BLDSTOOL",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "LSTBLDS3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HADSIGM3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "HADSGCO1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "LASTSIG3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PCPSAAD2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PCPSADI1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PCPSARE1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PSATEST1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PSATIME",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PCPSARS1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PCPSADE1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PCDMDECN",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SCNTMNY1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SCNTMEL1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SCNTPAID",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SCNTWRK1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SCNTLPAD",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SCNTLWK1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "SXORIENT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "TRNSGNDR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "RCSGENDR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "RCSRLTN2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CASTHDX2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "CASTHNO2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "EMTSUPRT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "LSATISFY",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADPLEASR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADDOWN",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADSLEEP",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADENERGY",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADEAT1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADFAIL",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADTHINK",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADMOVE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "MISTMNT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ADANXEV",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "QSTVER",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "QSTLANG",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "MSCODE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_STSTR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_STRWT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RAWRAKE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_WT2RAKE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_CHISPNC",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_CRACE1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_CPRACE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_CLLCPWT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_DUALUSE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_DUALCOR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_LLCPWT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RFHLTH",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_HCVU651",
+        "description": "Calculated variable: Respondents aged 18-64 who have any form of health care coverage",
+        "mapping": [
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "NaN"
+        ]
+    },
+    {
+        "id": "_RFHYPE5",
+        "description": "Calculated variable:Adults who have been told they have high blood pressure by a doctor, nurse, or other health professional",
+        "mapping": [
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "NaN"
+        ]
+    },
+    {
+        "id": "_CHOLCHK",
+        "description": "Calculated variable: Cholesterol check within past five years",
+        "mapping": [
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "3",
+            "NaN"
+        ]
+    },
+    {
+        "id": "_RFCHOL",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_LTASTH1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_CASTHM1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_ASTHMS1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_DRDXAR1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PRACE1",
+        "description": "Calculated variable: Preferred race category",
+        "mapping": [
+            [
+                "77",
+                "NaN"
+            ],
+            [
+                "99",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "NaN"
+        ]
+    },
+    {
+        "id": "_MRACE1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_HISPANC",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RACE",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RACEG21",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RACEGR3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RACE_G1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_AGEG5YR",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_AGE65YR",
+        "description": "Calculated variable: Two-level age category",
+        "mapping": [
+            [
+                "3",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "NaN"
+        ]
+    },
+    {
+        "id": "_AGE80",
+        "description": "Calculated variable: Imputed Age value collapsed above 80",
+        "mapping": [],
+        "type": "continuous"
+    },
+    {
+        "id": "_AGE_G",
+        "description": "Calculated variable: Six-level imputed age category",
+        "mapping": [],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+        ]
+    },
+    {
+        "id": "HTIN4",
+        "description": "Reported height in inches",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
+    },
+    {
+        "id": "HTM4",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "WTKG3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_BMI5",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_BMI5CAT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RFBMI5",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_CHLDCNT",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_EDUCAG",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_INCOMG",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_SMOKER3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RFSMOK3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DRNKANY5",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "DROCDY3_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RFBING5",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_DRNKWEK",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RFDRHV5",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FTJUDA1_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FRUTDA1_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "BEANDAY_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "GRENDAY_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ORNGDAY_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "VEGEDA1_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_MISFRTN",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_MISVEGN",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_FRTRESP",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_VEGRESP",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_FRUTSUM",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_VEGESUM",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_FRTLT1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_VEGLT1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_FRT16",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_VEG23",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_FRUITEX",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_VEGETEX",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_TOTINDA",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "METVL11_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "METVL21_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "MAXVO2_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "FC60_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ACTIN11_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "ACTIN21_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PADUR1_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PADUR2_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PAFREQ1_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PAFREQ2_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_MINAC11",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_MINAC21",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "STRFREQ_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PAMISS1_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PAMIN11_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PAMIN21_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PA1MIN_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PAVIG11_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PAVIG21_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "PA1VIGM_",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PACAT1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PAINDX1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PA150R2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PA300R2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PA30021",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PASTRNG",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PAREC1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PASTAE1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_LMTACT1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_LMTWRK1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_LMTSCL1",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RFSEAT2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_RFSEAT3",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_FLSHOT6",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_PNEUMO2",
+        "description": "TODO",
+        "type": "delete"
+    },
+    {
+        "id": "_AIDTST3",
+        "description": "TODO",
+        "type": "delete"
+    }
+]
