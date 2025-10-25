@@ -253,7 +253,6 @@ def predict_labels_linear_reg(x: np.ndarray, w: np.ndarray) -> np.ndarray:
 def predict_labels_logistic(x: np.ndarray, w: np.ndarray) -> np.ndarray:
     g_x = x @ w
     prob = sigmoid(g_x)
-    logger.info(json.dumps({"probabilities": prob.tolist()}))
     y_pred_labels = np.where(prob >= 0.5, 1, 0)
     return y_pred_labels
 

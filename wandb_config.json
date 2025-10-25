@@ -1,8 +1,8 @@
 {
     "method": "random",
     "metric": {
-        "name": "loss",
-        "goal": "minimize"
+        "name": "F1_Score",
+        "goal": "maximize"
     },
     "parameters": {
         "gamma": {
@@ -12,7 +12,7 @@
             "values": [100]
         },
         "lambda_": {
-            "values": [0.001, 0.01, 0.1, 1.0]
+            "values": [0.0001, 0.001, 0.01, 0.1]
         },
         "degree": {
             "values": [2, 3, 5, 10]
