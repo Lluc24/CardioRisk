@@ -7,6 +7,8 @@ from helpers import load_csv_data
 import logging
 import pathlib
 
+from implementations import build_poly
+
 NUMPY_ARRAYS_DIR = "clean_arrays"
 
 logger = logging.getLogger(__name__)
@@ -194,3 +196,15 @@ def one_hot_encoding(x_train: np.ndarray, x_test: np.ndarray, feature: dict, col
         updated.append(x)
     logger.info(f"One-hot encoding completed for feature {feature['id']}, new shape: {x_train.shape}")
     return updated[0], updated[1]
+
+
+def prepare_arrays(x_tr, x_te, num_cont_features, degree):
+    updated = []
+    for array in [x_tr, x_te]:
+        intercept = np.ones((array.shape[0], 1))
+        poly = build_poly(array[:, :num_cont_features], degree)
+        cat = array[:, num_cont_features:]
+        new_array = np.hstack([intercept, poly, cat])
+        updated.append(new_array)
+    x_tr, x_val = updated
+    return x_tr, x_val
