@@ -8,6 +8,7 @@ Right now, we are working on some assumptions to simplify things:
   - Exception: BPMEDS (taking medicine for high pressure), where NaNs are mainly because BPHIGH4 (have high pressure) is different from yes. We assumed that if respondent doesn't have high pressure, then does not take medicine. NaNs are encoded with 2 (not taking medicine).
   - Limitation: We are assuming that NaNs are informative signal. We need one more column
   - Alternative: Use all zeros to encode NaNs. Should modify `data_cleaning.one_hot_encode_column`
+- We will be using `WTKG3` and `HTM4` which are calculated variables of weight (kg) and height (meters) respectively to simplify (instead of using `WEIGHT2` or `HEIGHT3`)
 
 # [for 09/10] (if we can, if not, we work on it Thursday)
 - everyone makes a model (pick whatever function) with all their features and % of dataset

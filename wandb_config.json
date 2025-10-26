@@ -1,21 +1,21 @@
 {
     "method": "random",
     "metric": {
-        "name": "F1_Score",
+        "name": "Best_F1_Score",
         "goal": "maximize"
     },
     "parameters": {
         "gamma": {
-            "values": [0.1, 0.3, 0.5, 0.7, 0.9]
+            "values": [0.7]
         },
         "max_iters": {
-            "values": [100]
+            "values": [500]
         },
         "lambda_": {
-            "values": [0.0001, 0.001, 0.01, 0.1]
+            "values": [0.000000000000000000000000000001, 0.00000000000000000001, 0.0000000001, 0.0001, 0.001, 0.1, 1.0]
         },
         "degree": {
-            "values": [2, 3, 5, 10]
+            "values": [1, 2, 3]
         }
     }
 }

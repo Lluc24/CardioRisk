@@ -137,12 +137,11 @@ def process_metadata(json_path: str, headers: List[str]) -> List[dict]:
             mapping = feature["mapping"]
             if not isinstance(mapping, list):
                 raise ValueError(f"Mapping for feature '{feature['id']}' is not a list.")
-            for pair in mapping:
+            for i, pair in enumerate(mapping):
                 if not (isinstance(pair, list) and len(pair) == 2):
                     raise ValueError(f"Mapping entry {pair} in feature '{feature['id']}' is not a two-element list.")
-                for i, elem in enumerate(pair):
-                    if pair[i] != "mean":
-                        pair[i] = np.nan if elem == "NaN" else float(elem)
+                f = lambda x: x if "-" in x or x == "mean" else (np.nan if x == "NaN" else float(x))
+                mapping[i] = list(map(f, pair))
 
     pending_features = set(headers) - ids
     if pending_features:
