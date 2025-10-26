@@ -66,22 +66,27 @@ def get_run_method(*, x_tr, y_tr, x_te, test_ids, num_cont_features):
             max_iters = config.max_iters
             gamma = config.gamma
             degree = config.degree
+            logger.info(json.dumps({"Run_Name": run_name}))
+            logger.info(json.dumps({"Lambda": lambda_}))
+            logger.info(json.dumps({"Max_Iterations": max_iters}))
+            logger.info(json.dumps({"Gamma": gamma}))
+            logger.info(json.dumps({"Degree": degree}))
 
             x_train, x_test = prepare_arrays(x_tr, x_te, num_cont_features, degree)
             x_train, x_validation, y_train, y_validation = split_data(x_train, y_tr, ratio=0.8, seed=2)
             w = np.zeros(x_train.shape[1])
             w, loss = reg_logistic_regression(y=y_train, tx=x_train, lambda_=lambda_, initial_w=w, max_iters=max_iters, gamma=gamma)
-            y_val_pred = predict_labels_logistic(x_validation, w)
+            th, y_val_pred = predict_labels_logistic(x_validation, w, y_true=y_validation)
             accuracy, recall, fpr, precision, f1 = metrics(y_validation, y_val_pred)
-            logger.info(json.dumps({"Ones": np.sum(y_val_pred).item()}))
-            logger.info(json.dumps({"Zeros": len(y_val_pred) - np.sum(y_val_pred).item()}))
-            logger.info(json.dumps({"Accuracy": accuracy}))
-            logger.info(json.dumps({"Recall": recall}))
-            logger.info(json.dumps({"False_Positive_Rate": fpr}))
-            logger.info(json.dumps({"Precision": precision}))
-            logger.info(json.dumps({"F1_Score": f1}))
-            logger.info(json.dumps({"OLA_Metrics": f"{metrics_summary(y_validation, y_val_pred)}"}))
-            y_test_pred = predict_labels_logistic(x_test, w)
+            logger.info(json.dumps({"Best_Threshold": th}))
+            logger.info(json.dumps({"Best_Ones": np.sum(y_val_pred).item()}))
+            logger.info(json.dumps({"Best_Zeros": len(y_val_pred) - np.sum(y_val_pred).item()}))
+            logger.info(json.dumps({"Best_Accuracy": accuracy}))
+            logger.info(json.dumps({"Best_Recall": recall}))
+            logger.info(json.dumps({"Best_False_Positive_Rate": fpr}))
+            logger.info(json.dumps({"Best_Precision": precision}))
+            logger.info(json.dumps({"Best_F1_Score": f1}))
+            _, y_test_pred = predict_labels_logistic(x_test, w, threshold=th)
             y_test_pred = np.where(y_test_pred == 0, -1, 1)
             create_csv_submission(test_ids, y_test_pred, prefix=run_name)
         return w, loss
@@ -98,7 +103,7 @@ def main():
     y_train = np.where(y_train == -1, 0, 1)
     run = get_run_method(x_tr=x_train, y_tr=y_train, x_te=x_test, test_ids=test_ids,
                          num_cont_features=num_cont_features)
-    wandb.agent(sweep_id, run, count=30)
+    wandb.agent(sweep_id, run, count=50)
 
 if __name__ == '__main__':
     main()

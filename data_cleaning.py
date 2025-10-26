@@ -169,7 +169,11 @@ def solve_mapping(x_train: np.ndarray, x_test: np.ndarray, feature: dict, column
         mapping = feature["mapping"]
         for col in (x_train[:, column_index], x_test[:, column_index]):
             for [key, value] in mapping:
-                mask = np.isnan(col) if np.isnan(key) else col == key
+                if "-" in str(key):
+                    num1, num2 = tuple(map(float, key.split("-")))
+                    mask = (col >= num1) & (col <= num2)
+                else:
+                    mask = np.isnan(col) if np.isnan(key) else col == key
                 if value == "mean":
                     mean_value = np.nanmean(col)
                     col[mask] = mean_value

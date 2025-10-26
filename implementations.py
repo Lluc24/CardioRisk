@@ -2,6 +2,8 @@ import numpy as np
 import json
 import logging
 
+from evaluation import metrics
+
 logger = logging.getLogger(__name__)
 
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
@@ -130,13 +132,14 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         loss: the value of the loss (regularized logistic loss) using the last weight vector
     """
     w = initial_w
-    for _ in range(max_iters):
+    for i in range(max_iters):
         gradient = logistic_gradient(y, tx, w) + 2 * lambda_ * w
         w = w - gamma * gradient
         w_norm = np.linalg.norm(w)
         loss = logistic_loss(y, tx, w) + lambda_ * w_norm ** 2
-        logger.info(json.dumps({"loss": loss}))
-        logger.info(json.dumps({"w_norm": w_norm}))
+        if i % 10 == 0:
+            logger.info(json.dumps({"loss": loss}))
+            logger.info(json.dumps({"w_norm": w_norm}))
     loss = logistic_loss(y, tx, w)
     return w, loss
 
@@ -250,11 +253,21 @@ def predict_labels_linear_reg(x: np.ndarray, w: np.ndarray) -> np.ndarray:
     y_pred_labels = np.where(y_pred <= 0, -1, 1)
     return y_pred_labels
 
-def predict_labels_logistic(x: np.ndarray, w: np.ndarray) -> np.ndarray:
+def predict_labels_logistic(x: np.ndarray, w: np.ndarray, y_true: np.ndarray = None, threshold: float = None) -> tuple[float, np.ndarray]:
     g_x = x @ w
     prob = sigmoid(g_x)
-    y_pred_labels = np.where(prob >= 0.5, 1, 0)
-    return y_pred_labels
+    if threshold is None:
+        best_th = None
+        best_f1 = None
+        for th in np.arange(0.0, 1.01, 0.01):
+            y = np.where(prob >= th, 1, 0)
+            accuracy, recall, fpr, precision, f1 = metrics(y_true, y)
+            if best_f1 is None or f1 > best_f1:
+                best_f1 = f1
+                best_th = th
+        threshold = best_th
+    y = np.where(prob >= threshold, 1, 0)
+    return threshold, y
 
 def sigmoid(t: np.ndarray) -> np.ndarray:
     """Apply the sigmoid function on t.
