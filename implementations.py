@@ -1,10 +1,5 @@
 import numpy as np
-import json
-import logging
 
-from evaluation import metrics
-
-logger = logging.getLogger(__name__)
 
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     """The Gradient Descent (GD) algorithm.
@@ -27,6 +22,7 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
 
     loss = mean_squared_error(y, tx, w)
     return w, loss
+
 
 def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
     """The Stochastic Gradient Descent algorithm (SGD).
@@ -94,6 +90,7 @@ def ridge_regression(y, tx, lambda_):
     loss = mean_squared_error(y, tx, w)
     return w, loss
 
+
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """Logistic regression using gradient descent.
 
@@ -135,11 +132,6 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     for i in range(max_iters):
         gradient = logistic_gradient(y, tx, w) + 2 * lambda_ * w
         w = w - gamma * gradient
-        w_norm = np.linalg.norm(w)
-        loss = logistic_loss(y, tx, w) + lambda_ * w_norm ** 2
-        if i % 10 == 0:
-            logger.info(json.dumps({"loss": loss}))
-            logger.info(json.dumps({"w_norm": w_norm}))
     loss = logistic_loss(y, tx, w)
     return w, loss
 
@@ -241,6 +233,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         )  # The first data point of the following batch
         yield y[start_index:end_index], tx[start_index:end_index]
 
+
 def predict_labels_linear_reg(x: np.ndarray, w: np.ndarray) -> np.ndarray:
     """Generates class predictions given weights, and a test data matrix
     Args:
@@ -253,21 +246,12 @@ def predict_labels_linear_reg(x: np.ndarray, w: np.ndarray) -> np.ndarray:
     y_pred_labels = np.where(y_pred <= 0, -1, 1)
     return y_pred_labels
 
-def predict_labels_logistic(x: np.ndarray, w: np.ndarray, y_true: np.ndarray = None, threshold: float = None) -> tuple[float, np.ndarray]:
+
+def predict_labels_logistic(x: np.ndarray, w: np.ndarray, threshold: float = 0.5) -> np.ndarray:
     g_x = x @ w
     prob = sigmoid(g_x)
-    if threshold is None:
-        best_th = None
-        best_f1 = None
-        for th in np.arange(0.0, 1.01, 0.01):
-            y = np.where(prob >= th, 1, 0)
-            accuracy, recall, fpr, precision, f1 = metrics(y_true, y)
-            if best_f1 is None or f1 > best_f1:
-                best_f1 = f1
-                best_th = th
-        threshold = best_th
     y = np.where(prob >= threshold, 1, 0)
-    return threshold, y
+    return y
 
 def sigmoid(t: np.ndarray) -> np.ndarray:
     """Apply the sigmoid function on t.
@@ -295,7 +279,6 @@ def logistic_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> float:
     t = tx @ w
     loss = np.mean(-y * t + np.log(1 + np.exp(t)))
     return loss.item()
-
 
 
 def logistic_gradient(y, tx, w):
