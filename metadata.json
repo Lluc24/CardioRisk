@@ -608,7 +608,7 @@
     {
         "id": "WEIGHT2",
         "description": "About how much do you weigh without shoes? (If respondent answers in metrics, put a 9 in the first column)[Round fractions up.]. We will use WTKG3",
-        "type": "delete",
+        "type": "delete"
     },
     {
         "id": "HEIGHT3",
@@ -723,7 +723,7 @@
             ["77", "NaN"],
             ["99", "NaN"]
         ],
-        "vocabulary": ["1", "2", "3", "4", "5", "6", "7", "NaN"]
+        "vocabulary": ["1", "2", "3", "4", "5", "6", "7", "8", "NaN"]
     },
     {
         "id": "USENOW3",
@@ -1686,14 +1686,17 @@
         "id": "HTM4",
         "description": "Reported height in meters",
         "type": "continuous",
-        "mapping": []
+        "mapping": [
+            ["NaN", "mean"]
+        ]
     },
     {
         "id": "WTKG3",
         "description": "Reported weight in kilograms",
         "type": "continuous",
         "mapping": [
-            ["99999", "NaN"]
+            ["99999", "NaN"],
+            ["NaN", "mean"]
         ]
     },
     {
