@@ -234,25 +234,6 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         yield y[start_index:end_index], tx[start_index:end_index]
 
 
-def predict_labels_linear_reg(x: np.ndarray, w: np.ndarray) -> np.ndarray:
-    """Generates class predictions given weights, and a test data matrix
-    Args:
-        x: numpy array of shape=(num_samples, num_features)
-        w: numpy array of shape=(num_features, )
-    Returns:
-        numpy array of shape=(num_samples, ) containing the predicted class labels
-    """
-    y_pred = x @ w
-    y_pred_labels = np.where(y_pred <= 0, -1, 1)
-    return y_pred_labels
-
-
-def predict_labels_logistic(x: np.ndarray, w: np.ndarray, threshold: float = 0.5) -> np.ndarray:
-    g_x = x @ w
-    prob = sigmoid(g_x)
-    y = np.where(prob >= threshold, 1, 0)
-    return y
-
 def sigmoid(t: np.ndarray) -> np.ndarray:
     """Apply the sigmoid function on t.
 
