@@ -289,6 +289,8 @@ class Data:
                 # Process categorical features: apply mappings and one-hot encode
                 self._solve_mapping(feature, index)
                 self._one_hot_encoding(feature, index)
+                header = self.headers.pop(index)
+                self.headers.append(header)
                 print(f"Processed categorical feature {feature_id}, new shape: {self.x_train.shape}")
 
         # Remove columns with zero variance (all values equal)
