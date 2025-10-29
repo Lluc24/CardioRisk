@@ -296,10 +296,6 @@ class Data:
         # Remove columns with zero variance (all values equal)
         self._remove_homogeneous_columns()
 
-        # Standardize continuous features (first num_cont_features columns)
-        self.x_train[:, :self.num_cont_features] = standardize(self.x_train[:, :self.num_cont_features])
-        self.x_test[:, :self.num_cont_features] = standardize(self.x_test[:, :self.num_cont_features])
-        print(f"Standardized columns 0 to {self.num_cont_features - 1}, final shape: {self.x_train.shape}")
         print(f"Finished cleaning data")
 
 
@@ -446,29 +442,6 @@ class Data:
                     # Replace with specified value
                     col[mask] = value
                     print(f"Mapping feature {feature['id']} value {key} to {value}")
-
-
-
-
-def standardize(x: np.ndarray) -> np.ndarray:
-    """Standardizes data to zero mean and unit variance.
-
-    Applies z-score normalization: (x - mean) / std for each feature column.
-    This ensures all features have the same scale, which improves convergence
-    for gradient-based optimization methods.
-
-    Args:
-        x: numpy array of shape (N, D). Input data matrix where N is number
-           of samples and D is number of features.
-
-    Returns:
-        numpy array of shape (N, D). Standardized data where each column
-        has mean ≈ 0 and standard deviation ≈ 1.
-    """
-    means: np.ndarray = np.mean(x, axis=0)
-    stds: np.ndarray = np.std(x, axis=0)
-    result: np.ndarray = (x - means) / stds
-    return result
 
 
 def get_headers(dataset_path: str) -> list[str]:

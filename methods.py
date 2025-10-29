@@ -43,6 +43,8 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weig
         "False Positive Ratio": [],
         "Precision": [],
         "F1 Score": [],
+        "Mean": [],
+        "Std": []
     }
     if add_weights:
         metrics["Weights"] = []
@@ -50,7 +52,7 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weig
     print(f"Starting {k_fold}-fold cross-validation for {model}")
 
     # Iterate through each fold
-    for k, (x_tr, y_tr, x_val, y_val) in enumerate(dataset.k_fold_generator(k_fold)):
+    for k, (x_tr, y_tr, x_val, y_val, mean, std) in enumerate(dataset.k_fold_generator(k_fold)):
         # Train model on training fold
         w, train_loss = model.fit(y_tr, x_tr)
 
@@ -64,6 +66,8 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weig
         # Store metrics for this fold
         metrics['Train Loss'].append(train_loss)
         metrics['Validation Loss'].append(val_loss)
+        metrics["Mean"].append(mean)
+        metrics["Std"].append(std)
         if add_weights:
             metrics["Weights"].append(w.copy())
         for key in fold_metrics:

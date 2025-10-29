@@ -1,8 +1,6 @@
 from typing import Generator
 import numpy as np
 
-from dataset import Dataset
-
 
 def mean_squared_error_gd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
     """The Gradient Descent (GD) algorithm.

@@ -416,7 +416,7 @@ class LogisticRegressionGD(ModelBase):
                   If None, initializes to zeros.
     """
 
-    def __init__(self, max_iters: int = 100, gamma: float = 0.7, initial_w: np.ndarray = None):
+    def __init__(self, max_iters: int = 200, gamma: float = 0.7, initial_w: np.ndarray = None):
         """Initializes the Logistic Regression model.
 
         Args:

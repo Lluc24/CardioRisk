@@ -28,7 +28,7 @@ class Dataset:
         x_test: numpy array of shape (M, D) or None. Test feature matrix (labels unknown).
     """
 
-    def __init__(self, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray = None):
+    def __init__(self, x_train: np.ndarray, y_train: np.ndarray, num_cont_features: int):
         """Initializes the Dataset with training and optional test data.
 
         Args:
@@ -40,7 +40,7 @@ class Dataset:
         """
         self.x_train = x_train
         self.y_train = y_train
-        self.x_test = x_test
+        self.num_cont_features = num_cont_features
 
     def __len__(self):
         """Returns the number of training samples in the dataset.
@@ -50,7 +50,7 @@ class Dataset:
         """
         return len(self.x_train)
 
-    def k_fold_generator(self, k: int) -> Generator[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray], None, None]:
+    def k_fold_generator(self, k: int) -> Generator[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.generic, np.generic], None, None]:
         """Generates k-fold cross-validation splits as a generator.
 
         Randomly shuffles the training data and divides it into k approximately
@@ -88,16 +88,22 @@ class Dataset:
             val_indices = indices[val_start:val_end]
 
             # Extract training data (k-1 folds)
-            x_train = self.x_train[train_indices]
+            x_train = self.x_train[train_indices].copy()
             y_train = self.y_train[train_indices]
 
             # Extract validation data (1 fold)
-            x_val = self.x_train[val_indices]
+            x_val = self.x_train[val_indices].copy()
             y_val = self.y_train[val_indices]
 
-            yield x_train, y_train, x_val, y_val
+            mean: np.generic = np.mean(x_train[:, 1:self.num_cont_features+1], axis=0)
+            std: np.generic = np.std(x_train[:, 1:self.num_cont_features+1], axis=0)
 
-    def split_data(self, ratio: float = 0.8) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+            x_train[:, 1:self.num_cont_features+1] = (x_train[:, 1:self.num_cont_features+1] - mean) / std
+            x_val[:, 1:self.num_cont_features+1] = (x_val[:, 1:self.num_cont_features+1] - mean) / std
+
+            yield x_train, y_train, x_val, y_val, mean, std
+
+    def split_data(self, ratio: float = 0.8) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.generic, np.generic]:
         """Randomly splits the training data into train and validation sets.
 
         Shuffles the entire training dataset and divides it into two subsets
@@ -126,11 +132,17 @@ class Dataset:
         val_indices = indices[split_index:]
 
         # Extract training subset
-        x_train = self.x_train[train_indices]
+        x_train = self.x_train[train_indices].copy()
         y_train = self.y_train[train_indices]
 
         # Extract validation subset
-        x_val = self.x_train[val_indices]
+        x_val = self.x_train[val_indices].copy()
         y_val = self.y_train[val_indices]
 
-        return x_train, x_val, y_train, y_val
+        mean: np.generic = np.mean(x_train[:, 1:self.num_cont_features+1], axis=0)
+        std: np.generic = np.std(x_train[:, 1:self.num_cont_features+1], axis=0)
+
+        x_train[:, 1:self.num_cont_features+1] = (x_train[:, 1:self.num_cont_features+1] - mean) / std
+        x_val[:, 1:self.num_cont_features+1] = (x_val[:, 1:self.num_cont_features+1] - mean) / std
+
+        return x_train, x_val, y_train, y_val, mean, std
