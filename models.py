@@ -241,7 +241,7 @@ class LeastSquares(ModelBase):
         """
         if self.w is None:
             raise RuntimeError("Model not fitted. Call fit() first.")
-        return mean_squared_error(y, tx, self.w)
+        return mean_squared_error(y, tx, self.w).item()
 
     def __str__(self):
         """String representation of the model."""
@@ -268,7 +268,7 @@ class MSEGradientDescent(LeastSquares):
                   If None, initializes to zeros.
     """
 
-    def __init__(self, max_iters: int = 100, gamma: float = 0.1, initial_w: np.ndarray = None):
+    def __init__(self, max_iters: int = 200, gamma: float = 0.1, initial_w: np.ndarray = None):
         """Initializes the Gradient Descent model.
 
         Args:
@@ -521,7 +521,7 @@ class LogisticRegressionGD(ModelBase):
 
         # Convert labels from (-1, 1) to (0, 1) for loss calculation
         y = np.where(y == -1.0, 0.0, 1.0)
-        return logistic_loss(y, tx, self.w)
+        return logistic_loss(y, tx, self.w).item()
 
     def __str__(self):
         """String representation of the model."""
