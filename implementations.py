@@ -1,7 +1,10 @@
+from typing import Generator
 import numpy as np
 
+from dataset import Dataset
 
-def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
+
+def mean_squared_error_gd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
     """The Gradient Descent (GD) algorithm.
 
         Args:
@@ -17,14 +20,14 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
         """
     w = initial_w
     for _ in range(max_iters):
-        gradient = compute_gradient(y, tx, w)
+        gradient: np.ndarray = compute_gradient(y, tx, w)
         w = w - gamma * gradient
 
-    loss = mean_squared_error(y, tx, w)
+    loss: np.generic = mean_squared_error(y, tx, w)
     return w, loss
 
 
-def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
+def mean_squared_error_sgd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
     """The Stochastic Gradient Descent algorithm (SGD).
 
         Args:
@@ -42,14 +45,14 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
     w = initial_w
     for _ in range(max_iters):
         mini_y, mini_tx = next(batch_iter(y, tx, batch_size))
-        gradient = compute_gradient(mini_y, mini_tx, w)
+        gradient: np.ndarray = compute_gradient(mini_y, mini_tx, w)
         w = w - gamma * gradient
 
-    loss = mean_squared_error(y, tx, w)
+    loss: np.generic = mean_squared_error(y, tx, w)
     return w, loss
 
 
-def least_squares(y, tx):
+def least_squares(y: np.ndarray, tx: np.ndarray) -> tuple[np.ndarray, np.generic]:
     """Calculate the least squares solution.
            returns mse, and optimal weights.
 
@@ -62,14 +65,14 @@ def least_squares(y, tx):
             mse: scalar.
     """
     tx_t = tx.T
-    A = tx_t @ tx
+    a = tx_t @ tx
     b = tx_t @ y
-    w = np.linalg.solve(A, b)
-    loss = mean_squared_error(y, tx, w)
+    w: np.ndarray = np.linalg.solve(a, b)  # Solve the equation Aw = b
+    loss: np.generic = mean_squared_error(y, tx, w)
     return w, loss
 
 
-def ridge_regression(y, tx, lambda_):
+def ridge_regression(y: np.ndarray, tx: np.ndarray, lambda_: float) -> tuple[np.ndarray, np.generic]:
     """implement ridge regression.
 
         Args:
@@ -81,17 +84,17 @@ def ridge_regression(y, tx, lambda_):
             w: optimal weights, numpy array of shape(D,), D is the number of features.
             loss: scalar MSE
         """
-    N, D = tx.shape
-    lambda_prime = 2 * lambda_ * N
+    n, d = tx.shape
+    lambda_prime = 2 * lambda_ * n
     tx_t = tx.T
-    A = tx_t @ tx + lambda_prime * np.eye(D)
+    a = tx_t @ tx + lambda_prime * np.eye(d)
     b = tx_t @ y
-    w = np.linalg.solve(A, b)
-    loss = mean_squared_error(y, tx, w)
+    w: np.ndarray = np.linalg.solve(a, b)  # Solve the equation Aw = b
+    loss: np.generic = mean_squared_error(y, tx, w)
     return w, loss
 
 
-def logistic_regression(y, tx, initial_w, max_iters, gamma):
+def logistic_regression(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
     """Logistic regression using gradient descent.
 
     Args:
@@ -106,14 +109,14 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """
     w = initial_w
     for _ in range(max_iters):
-        gradient = logistic_gradient(y, tx, w)
+        gradient: np.ndarray = logistic_gradient(y, tx, w)
         w = w - gamma * gradient
 
-    loss = logistic_loss(y, tx, w)
+    loss: np.generic = logistic_loss(y, tx, w)
     return w, loss
 
 
-def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+def reg_logistic_regression(y: np.ndarray, tx: np.ndarray, lambda_: float, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
     """Regularized logistic regression using gradient descent.
 
     Args:
@@ -129,10 +132,10 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         loss: the value of the loss (regularized logistic loss) using the last weight vector
     """
     w = initial_w
-    for i in range(max_iters):
-        gradient = logistic_gradient(y, tx, w) + 2 * lambda_ * w
+    for _ in range(max_iters):
+        gradient: np.ndarray = logistic_gradient(y, tx, w) + 2 * lambda_ * w
         w = w - gamma * gradient
-    loss = logistic_loss(y, tx, w)
+    loss: np.generic = logistic_loss(y, tx, w)
     return w, loss
 
 
@@ -140,7 +143,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
 # Auxiliar Functions
 ########################################################################################3
 
-def mean_squared_error(y, tx, w):
+def mean_squared_error(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.generic:
     """Calculate the loss using MSE
 
     Args:
@@ -151,14 +154,14 @@ def mean_squared_error(y, tx, w):
     Returns:
         the value of the loss (a scalar), corresponding to the input parameters w.
     """
-    (N, )  = y.shape
-    error = y - tx @ w
-    loss = 1 / (2 * N) * error.T @ error
+    n: int  = y.shape[0]
+    error: np.ndarray = y - tx @ w
+    loss: np.generic = 1 / (2 * n) * error.T @ error # type: ignore
     return loss
 
 
-def compute_gradient(y, tx, w):
-    """Computes the gradient at w.
+def compute_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray:
+    """Computes the gradient at w of the Mean Squared Error loss function.
 
     Args:
         y: numpy array of shape=(N, )
@@ -168,13 +171,13 @@ def compute_gradient(y, tx, w):
     Returns:
         An numpy array of shape (D, ) (same shape as w), containing the gradient of the loss at w.
     """
-    (N, ) = y.shape
-    errors = y - tx @ w
-    gradient = -1/N * tx.T @ errors
+    n = y.shape[0]
+    errors: np.ndarray = y - tx @ w
+    gradient: np.ndarray = -1 / n * tx.T @ errors
     return gradient
 
 
-def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
+def batch_iter(y: np.ndarray, tx: np.ndarray, batch_size: int, num_batches: int = 1, shuffle: bool = True) -> Generator[tuple[np.ndarray, np.ndarray], None, None]:
     """
     Generate a minibatch iterator for a dataset.
     Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
@@ -220,7 +223,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         # Generate an array of indexes indicating the start of each batch
         idxs = np.random.randint(max_batches, size=num_batches) * batch_size
         if remainder != 0:
-            # Add an random offset to the start of each batch to eventually consider the remainder points
+            # Add a random offset to the start of each batch to eventually consider the remainder points
             idxs += np.random.randint(remainder + 1, size=num_batches)
     else:
         # If no shuffle is done, the array of indexes is circular.
@@ -234,7 +237,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         yield y[start_index:end_index], tx[start_index:end_index]
 
 
-def sigmoid(t: np.ndarray) -> np.ndarray:
+def sigmoid(t: np.ndarray | np.generic) -> np.ndarray | np.generic:
     """Apply the sigmoid function on t.
 
     Args:
@@ -246,7 +249,7 @@ def sigmoid(t: np.ndarray) -> np.ndarray:
     return 1 / (1 + np.exp(-t))
 
 
-def logistic_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> float:
+def logistic_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.generic:
     """Compute the cost by negative log likelihood.
 
     Args:
@@ -258,24 +261,24 @@ def logistic_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> float:
         The negative log likelihood.
     """
     t = tx @ w
-    loss = np.mean(-y * t + np.log(1 + np.exp(t)))
-    return loss.item()
+    loss: np.generic = np.mean(-y * t + np.log(1 + np.exp(t)))
+    return loss
 
 
-def logistic_gradient(y, tx, w):
+def logistic_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray:
     """compute the gradient of loss.
 
     Args:
         y:  shape=(N, )
         tx: shape=(N, D)
-        w:  shape=(D, )
+        w:  shape=(D, ).
 
     Returns:
         a vector of shape (D )
     """
-    (N, ) = y.shape
-    s = sigmoid(tx@w)
-    gradient = 1 / N * tx.T @ (s - y)
+    n = y.shape[0]
+    s: np.ndarray = sigmoid(tx@w)
+    gradient: np.ndarray = 1 / n * tx.T @ (s - y)
     return gradient
 
 
@@ -289,7 +292,9 @@ def build_poly(x: np.ndarray, degree: int) -> np.ndarray:
         numpy array of shape=(num_samples, num_features*degree)
     """
     num_samples, num_features = x.shape
-    one_dim = x.reshape(-1)
-    poly = np.vander(one_dim, degree+1, increasing=True)[:, 1:]
-    poly = poly.reshape(num_samples, num_features * degree)
+    one_dim: np.ndarray = x.reshape(-1)  # Flatten to 1D array (rows stacked horitzontally)
+    poly: np.ndarray = np.vander(one_dim, degree+1, increasing=True)[:, 1:]  # Create Vandermonde matrix and remove the first column (degree 0)
+    # We have a matrix where each row is a feature expansion of a single feature.
+    # We reshape it to have all features for a single sample in a row.
+    poly: np.ndarray = poly.reshape(num_samples, num_features * degree)
     return poly
