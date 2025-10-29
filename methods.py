@@ -4,7 +4,7 @@ from dataset import Dataset
 from models import ModelBase
 
 
-def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5):
+def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weights: bool = True):
     metrics = {
         'Train Loss': [],
         'Validation Loss': [],
@@ -13,8 +13,9 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5):
         "False Positive Ratio": [],
         "Precision": [],
         "F1 Score": [],
-        "Weights Norm": []
     }
+    if add_weights:
+        metrics["Weights"] = []
 
     print(f"Starting {k_fold}-fold cross-validation for {model}")
 
@@ -25,9 +26,10 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5):
         y_pred = model.predict(x_val)
         fold_metrics = model.get_metrics(y_val, y_pred)
 
-        metrics['Weights Norm'].append(np.linalg.norm(w))
         metrics['Train Loss'].append(train_loss)
         metrics['Validation Loss'].append(val_loss)
+        if add_weights:
+            metrics["Weights"].append(w)
         for key in fold_metrics:
             metrics[key].append(fold_metrics[key])
 
