@@ -727,12 +727,17 @@
     },
     {
         "id": "USENOW3",
-        "description": "TODO",
-        "type": "delete"
+        "description": "Tobacco consumption",
+        "type": "categorical",
+        "mapping": [
+            ["9", "NaN"],
+            ["7","NaN"]
+        ],
+        "vocabulary": ["1","2","3","NaN"]        
     },
     {
         "id": "ALCDAY5",
-        "description": "TODO",
+        "description": "Alcohol consumption",
         "type": "delete"
     },
     {
@@ -782,8 +787,13 @@
     },
     {
         "id": "EXERANY2",
-        "description": "TODO",
-        "type": "delete"
+        "description": "physical exercise in the past month",
+        "type": "categorical",
+        "mapping": [
+            ["7", "NaN"],
+            ["9", "NaN"]
+        ],
+        "vocabulary": ["1", "2","NaN"]
     },
     {
         "id": "EXRACT11",
@@ -842,8 +852,14 @@
     },
     {
         "id": "SEATBELT",
-        "description": "TODO",
-        "type": "delete"
+        "description": "How often wears seatbelt",
+        "type": "categorical",
+        "mapping": [
+            ["7", "NaN"],
+            ["8", "NaN"],
+            ["9", "NaN"]
+        ],
+        "vocabulary": ["1", "2", "3","4","5","NaN"]
     },
     {
         "id": "FLUSHOT6",
@@ -1387,8 +1403,13 @@
     },
     {
         "id": "ADSLEEP",
-        "description": "TODO",
-        "type": "delete"
+        "description": "Number of days with trouble sleeping",
+        "type": "categorical",
+        "mapping": [
+            ["77", "NaN"],
+            ["99", "NaN"]
+        ],
+        "vocabulary": ["1", "2", "3", "4", "5", "6", "7", "8","9","10","11","12","13","14","88", "NaN"]
     },
     {
         "id": "ADENERGY",
@@ -1613,7 +1634,24 @@
     {
         "id": "_RACE",
         "description": "TODO",
-        "type": "delete"
+        "mapping": [
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "NaN"
+        ]
     },
     {
         "id": "_RACEG21",
@@ -1701,8 +1739,11 @@
     },
     {
         "id": "_BMI5",
-        "description": "TODO",
-        "type": "delete"
+        "description": "Body Mass Index",
+        "type": "continuous",
+        "mapping": [
+            ["NaN", "mean"]
+        ]
     },
     {
         "id": "_BMI5CAT",
@@ -1741,8 +1782,23 @@
     },
     {
         "id": "DRNKANY5",
-        "description": "TODO",
-        "type": "delete"
+        "description": "Adults who reported having had at least one drink in the past 30 days",
+        "mapping": [
+            [
+                "7",
+                "NaN"
+            ],
+            [
+                "9",
+                "NaN"
+            ]
+        ],
+        "type": "categorical",
+        "vocabulary": [
+            "1",
+            "2",
+            "NaN"
+        ]
     },
     {
         "id": "DROCDY3_",
@@ -1751,8 +1807,12 @@
     },
     {
         "id": "_RFBING5",
-        "description": "TODO",
-        "type": "delete"
+        "description": "binge drinkers",
+        "type": "categorical",
+        "mapping": [
+            ["9", "NaN"]
+        ],
+        "vocabulary": ["1","2","NaN"]  
     },
     {
         "id": "_DRNKWEK",
@@ -1761,8 +1821,12 @@
     },
     {
         "id": "_RFDRHV5",
-        "description": "TODO",
-        "type": "delete"
+        "description": "heavy drinkers",
+        "type": "categorical",
+        "mapping": [
+            ["9", "NaN"]
+        ],
+        "vocabulary": ["1","2","NaN"]  
     },
     {
         "id": "FTJUDA1_",
@@ -1771,28 +1835,58 @@
     },
     {
         "id": "FRUTDA1_",
-        "description": "TODO",
-        "type": "delete"
+        "description": "fruit intake in times per day",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "BEANDAY_",
-        "description": "TODO",
-        "type": "delete"
+        "description": "bean intake in times per day",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "GRENDAY_",
-        "description": "TODO",
-        "type": "delete"
+        "description": "dark green vegetables consumption per day",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "ORNGDAY_",
-        "description": "TODO",
-        "type": "delete"
+        "description": "orange-coloured vegetables consumption per day",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "VEGEDA1_",
-        "description": "TODO",
-        "type": "delete"
+        "description": "other vegetable intake",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "_MISFRTN",
@@ -1816,13 +1910,25 @@
     },
     {
         "id": "_FRUTSUM",
-        "description": "TODO",
-        "type": "delete"
+        "description": "total fruit consumed",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "_VEGESUM",
-        "description": "TODO",
-        "type": "delete"
+        "description": "total veggies consumed",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "_FRTLT1",
@@ -1856,13 +1962,23 @@
     },
     {
         "id": "_TOTINDA",
-        "description": "TODO",
-        "type": "delete"
+        "description": "physical activity",
+        "type": "categorical",
+        "mapping": [
+            ["9", "NaN"]
+        ],
+        "vocabulary": ["1", "2", "NaN"]
     },
     {
         "id": "METVL11_",
         "description": "TODO",
-        "type": "delete"
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "METVL21_",
@@ -1891,23 +2007,47 @@
     },
     {
         "id": "PADUR1_",
-        "description": "TODO",
-        "type": "delete"
+        "description": "minutes of first activity",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "PADUR2_",
-        "description": "TODO",
-        "type": "delete"
+        "description": "minutes of second activity",
+        "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "PAFREQ1_",
-        "description": "TODO",
-        "type": "delete"
+        "description": "physical activity frequency",
+                "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "PAFREQ2_",
-        "description": "TODO",
-        "type": "delete"
+        "description": "physical activity frequecy activity 2",
+                "mapping": [
+            [
+                "NaN",
+                "mean"
+            ]
+        ],
+        "type": "continuous"
     },
     {
         "id": "_MINAC11",
