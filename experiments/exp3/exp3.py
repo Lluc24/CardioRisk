@@ -1,7 +1,5 @@
-from collections import defaultdict
 import csv
 from data_cleaning import Data
-from implementations import compute_gradient, mean_squared_error, logistic_gradient, logistic_loss, sigmoid
 from dataset import Dataset
 import numpy as np
 import tempfile
@@ -18,7 +16,7 @@ def run_exp3():
     print("Running Experiment 3")
     data = Data()
     data.load_from_csv("dataset", "metadata.json")
-    name = tempfile.mktemp()
+    name = tempfile.mktemp(suffix=".npz")
     data.save_to_numpy_file(name)
 
     for degree in DEGREES:
@@ -37,7 +35,6 @@ def run_exp3():
 
             for gamma in GAMMAS:
                 model = LogisticRegressionGD(max_iters=MAX_ITERS, gamma=gamma)
-                dataset = Dataset(data.x_train, data.y_train, data.num_cont_features)
                 metrics = cross_validate(model, dataset, add_weights=True, search_threshold_iterations=100)
 
                 tr_loss = np.mean(metrics["Train Loss"]).item()
