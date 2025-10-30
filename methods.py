@@ -23,6 +23,7 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weig
                Each fold uses (k-1)/k of data for training and 1/k for validation.
         add_weights: bool. Whether to store learned weights from each fold.
                     Default is True. Useful for analyzing weight stability.
+        search_threshold_iterations: int. If > 0, performs threshold search on validation set for each fold using the specified number of thresholds.Default is 0 (no threshold search). Default is 0 (no threshold search).
 
     Returns:
         dict with string keys and list values. Each list has k_fold elements:
@@ -74,6 +75,7 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weig
         metrics['Validation Loss'].append(val_loss)
         metrics["Mean"].append(mean)
         metrics["Std"].append(std)
+        metrics["Thresholds"].append(threshold)
         if add_weights:
             metrics["Weights"].append(w.copy())
         for key in fold_metrics:
