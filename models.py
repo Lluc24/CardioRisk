@@ -141,8 +141,6 @@ class ModelBase(ABC):
         # False Positives: actual=-1, predicted=1
         fp = np.sum(y_predicted[zeros_mask] == 1.0).item()
 
-        print("TP:", tp, "FN:", fn, "TN:", tn, "FP:", fp)
-
         # Calculate metrics with safe division (avoid divide by zero)
         accuracy = (tp + tn) / n  # proportion of total predictions that were correct
         recall = tp / (tp + fn) if (tp + fn) > 0 else 0  # positive cases that were correctly identified

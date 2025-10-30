@@ -24,7 +24,7 @@ def run_exp2():
 
         m = [defaultdict(float) for _ in range(200)]
 
-        with open(f"exp2_gamma_{gamma}.csv", "w", ) as csvfile:
+        with open(f"exp2_gamma_{gamma}.csv", "w") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Iteration", "Training Loss", "Validation Loss", "Weights Norm"])
 

@@ -18,7 +18,7 @@ def run_exp1():
 
         m = [defaultdict(float) for _ in range(MAX_ITERS)]
 
-        with open(f"gamma_{gamma}.csv", "w") as csvfile:
+        with open(f"exp1_gamma_{gamma}.csv", "w") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Iteration", "Training Loss", "Validation Loss", "Weights Norm"])
 
