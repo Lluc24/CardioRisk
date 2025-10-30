@@ -7,12 +7,13 @@ import numpy as np
 
 MAX_ITERS = 200
 K_FOLD = 5
+DEGREE = 3
 
 def run_exp1():
     print("Running Experiment 2")
     data = Data()
-    data.load_from_numpy_file("data_csv.npz")
-    data.feature_expansion(7)
+    data.load_from_numpy_file("cleaned_data.npz")
+    data.feature_expansion(DEGREE)
     data.add_intercept()
     data.y_train = np.where(data.y_train == -1.0, 0.0, 1.0)
     dataset = Dataset(data.x_train, data.y_train, data.num_cont_features)
