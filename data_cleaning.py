@@ -165,6 +165,8 @@ class Data:
         # Concatenate expanded continuous and categorical features
         self.x_train = np.hstack([x_train_poly, x_train_cat])
         self.x_test = np.hstack([x_test_poly, x_test_cat])
+
+        self.num_cont_features = len(x_train_poly)
         print(f"Expanded features to degree {degree}, new shape: {self.x_train.shape}")
 
 
