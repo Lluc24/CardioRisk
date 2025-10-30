@@ -1,0 +1,3 @@
+Cross-validation complete.
+TP: 3107 FN: 2701 TN: 53670 FP: 6149
+Local Test Set Metrics: {'Accuracy': 0.8651469669495787, 'Recall': 0.5349517906336089, 'False Positive Ratio': 0.10279342683762684, 'Precision': 0.3356741573033708, 'F1 Score': 0.4125066383430696}
