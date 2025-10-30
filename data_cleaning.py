@@ -308,6 +308,7 @@ class Data:
         self._remove_homogeneous_columns()
 
         print(f"Finished cleaning data")
+        print(f"Final data shape: {self.x_train.shape}, with {self.num_cont_features} continuous features")
 
 
     def _auto_process_feature(self, feature: dict, column_index: int) -> None:
