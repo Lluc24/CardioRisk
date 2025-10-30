@@ -22,7 +22,7 @@ def main():
     dataset = Dataset(x_train, y_train, num_cont_features)
 
     model = LogisticRegressionGD()
-    metrics = cross_validate(model, dataset, search_threshold_iterations=1000)
+    metrics = cross_validate(model, dataset, threshold=0.18)
 
     # Average weights and threshold from cross-validation
     weights = np.mean(metrics.pop('Weights'), axis=0)

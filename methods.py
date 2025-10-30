@@ -75,6 +75,7 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weig
         metrics['Validation Loss'].append(val_loss)
         metrics["Mean"].append(mean)
         metrics["Std"].append(std)
+        metrics["Thresholds"].append(threshold)
         if add_weights:
             metrics["Weights"].append(w.copy())
         for key in fold_metrics:
