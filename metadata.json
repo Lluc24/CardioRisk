@@ -2,133 +2,133 @@
     {
         "id": "_STATE",
         "description": "State FIPS Code",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FMONTH",
         "description": "File Month for Record Identification",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "IDATE",
         "description": "Interview Date",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "IMONTH",
         "description": "Interview Month",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "IDAY",
         "description": "Interview Day of Month",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "IYEAR",
         "description": "Interview Year",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "DISPCODE",
         "description": "Final Disposition (finished the interview completely or partially)",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SEQNO",
         "description": "Annual Sequence Number",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PSU",
         "description": "Primary Sampling Unit (Equal to Annual Sequence Number)",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CTELENUM",
         "description": "Correct Telephone Number?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PVTRESD1",
         "description": "Is this a private residence?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "COLGHOUS",
         "description": "Do you live in college housing?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "STATERES",
         "description": "Do you reside in ____(state)____?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CELLFON3",
         "description": "Is this a cellular telephone?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "LADULT",
         "description": "Are you 18 years of age or older?",
-        "type": "delete",
+        "type": "auto",
         "note": "It only has 45 non NaN values"
     },
     {
         "id": "NUMADULT",
         "description": "Number of Adults in Household",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "NUMMEN",
         "description": "Number of Adult Men in Household",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "NUMWOMEN",
         "description": "Number of Adult Women in Household",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CTELNUM1",
         "description": "Is this (phone number) ?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CELLFON2",
         "description": "Is this a cellular telephone?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CADULT",
         "description": "Are you 18 years of age or older? Answers: Yes, Male respondant 0.21 / Yes, Female respondant 0.21 / Blank 0.58",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PVTRESD2",
         "description": "Do you live in a private residence, that is, not in a dormitory or other type of group living situation?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CCLGHOUS",
         "description": "Do you live in college housing?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CSTATE",
         "description": "Are you a resident of [STATE]?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "LANDLINE",
         "description": "Do you also have a landline telephone in your home that is used to make and receive calls?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HHADULT",
         "description": "How many members of your household, including yourself, are 18 years of age or older?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "GENHLTH",
@@ -508,7 +508,7 @@
     {
         "id": "DIABAGE2",
         "description": "How old were you when you were told you have diabetes? (Only if DIABETE3 is Yes (1))",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SEX",
@@ -540,27 +540,27 @@
     {
         "id": "RENTHOM1",
         "description": "Do you own or rent your home? (Home is defined as the place where you live most of the time/the majority of the year.)",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "NUMHHOL2",
         "description": "Do you have more than one telephone number in your household? Do not include cell phones or numbers that are only used by a computer or fax machine.",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "NUMPHON2",
         "description": "How many of these telephone numbers are residential numbers?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CPDEMO1",
         "description": "Do you have a cell phone for personal use? Please include cell phones used for both business and personal use",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VETERAN3",
         "description": "Have you ever served on active duty in the United States Armed Forces, either in the regular military or in a National Guard or military reserve unit? (Active duty does not include training for the Reserves or National Guard, but DOES include activation, for example, for the Persian Gulf War.)",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "EMPLOY1",
@@ -603,22 +603,22 @@
     {
         "id": "INTERNET",
         "description": "Have you used the internet in the past 30 days?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "WEIGHT2",
         "description": "About how much do you weigh without shoes? (If respondent answers in metrics, put a 9 in the first column)[Round fractions up.]. We will use WTKG3",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HEIGHT3",
         "description": "About how tall are you without shoes? (If respondent answers in metrics, put a 9 in the first column)[Round fractions down.]. We will use HTIN4",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PREGNANT",
         "description": "To your knowledge, are you now pregnant?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "QLACTLM2",
@@ -643,7 +643,7 @@
     {
         "id": "BLIND",
         "description": "Are you blind or do you have serious difficulty seeing, even when wearing glasses?",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "DECIDE",
@@ -738,52 +738,52 @@
     {
         "id": "ALCDAY5",
         "description": "Alcohol consumption",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "AVEDRNK2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "DRNK3GE5",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "MAXDRNKS",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FRUITJU1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FRUIT1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FVBEANS",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FVGREEN",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FVORANG",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VEGETAB1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "EXERANY2",
@@ -798,57 +798,57 @@
     {
         "id": "EXRACT11",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "EXEROFT1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "EXERHMM1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "EXRACT21",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "EXEROFT2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "EXERHMM2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "STRENGTH",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "LMTJOIN3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ARTHDIS2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ARTHSOCL",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "JOINPAIN",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SEATBELT",
@@ -864,542 +864,542 @@
     {
         "id": "FLUSHOT6",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FLSHTMY2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "IMFVPLAC",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PNEUVAC3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HIVTST6",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HIVTSTD3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "WHRTST10",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PDIABTST",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PREDIAB1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "INSULIN",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "BLDSUGAR",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FEETCHK2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "DOCTDIAB",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CHKHEMO3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FEETCHK",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "EYEEXAM",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "DIABEYE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "DIABEDU",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CAREGIV1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CRGVREL1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CRGVLNG1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CRGVHRS1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CRGVPRB1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CRGVPERS",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CRGVHOUS",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CRGVMST2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CRGVEXPT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VIDFCLT2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VIREDIF3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VIPRFVS2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VINOCRE2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VIEYEXM2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VIINSUR2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VICTRCT4",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VIGLUMA2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "VIMACDG2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CIMEMLOS",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CDHOUSE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CDASSIST",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CDHELP",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CDSOCIAL",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CDDISCUS",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "WTCHSALT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "LONGWTCH",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "DRADVISE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASTHMAGE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASATTACK",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASERVIST",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASDRVIST",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASRCHKUP",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASACTLIM",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASYMPTOM",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASNOSLEP",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASTHMED3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASINHALR",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HAREHAB1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "STREHAB1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CVDASPRN",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ASPUNSAF",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "RLIVPAIN",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "RDUCHART",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "RDUCSTRK",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ARTTODAY",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ARTHWGT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ARTHEXER",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ARTHEDU",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "TETANUS",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HPVADVC2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HPVADSHT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SHINGLE2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HADMAM",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HOWLONG",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HADPAP2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "LASTPAP2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HPVTEST",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HPLSTTST",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HADHYST2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PROFEXAM",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "LENGEXAM",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "BLDSTOOL",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "LSTBLDS3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HADSIGM3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "HADSGCO1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "LASTSIG3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PCPSAAD2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PCPSADI1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PCPSARE1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PSATEST1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PSATIME",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PCPSARS1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PCPSADE1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PCDMDECN",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SCNTMNY1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SCNTMEL1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SCNTPAID",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SCNTWRK1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SCNTLPAD",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SCNTLWK1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "SXORIENT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "TRNSGNDR",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "RCSGENDR",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "RCSRLTN2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CASTHDX2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "CASTHNO2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "EMTSUPRT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "LSATISFY",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ADPLEASR",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ADDOWN",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ADSLEEP",
@@ -1414,112 +1414,112 @@
     {
         "id": "ADENERGY",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ADEAT1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ADFAIL",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ADTHINK",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ADMOVE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "MISTMNT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ADANXEV",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "QSTVER",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "QSTLANG",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "MSCODE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_STSTR",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_STRWT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RAWRAKE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_WT2RAKE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_CHISPNC",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_CRACE1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_CPRACE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_CLLCPWT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_DUALUSE",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_DUALCOR",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_LLCPWT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RFHLTH",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_HCVU651",
@@ -1573,27 +1573,27 @@
     {
         "id": "_RFCHOL",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_LTASTH1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_CASTHM1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_ASTHMS1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_DRDXAR1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PRACE1",
@@ -1624,12 +1624,12 @@
     {
         "id": "_MRACE1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_HISPANC",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RACE",
@@ -1656,22 +1656,22 @@
     {
         "id": "_RACEG21",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RACEGR3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RACE_G1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_AGEG5YR",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_AGE65YR",
@@ -1748,37 +1748,37 @@
     {
         "id": "_BMI5CAT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RFBMI5",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_CHLDCNT",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_EDUCAG",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_INCOMG",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_SMOKER3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RFSMOK3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "DRNKANY5",
@@ -1803,7 +1803,7 @@
     {
         "id": "DROCDY3_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RFBING5",
@@ -1817,7 +1817,7 @@
     {
         "id": "_DRNKWEK",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RFDRHV5",
@@ -1831,7 +1831,7 @@
     {
         "id": "FTJUDA1_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FRUTDA1_",
@@ -1891,22 +1891,22 @@
     {
         "id": "_MISFRTN",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_MISVEGN",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_FRTRESP",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_VEGRESP",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_FRUTSUM",
@@ -1933,32 +1933,32 @@
     {
         "id": "_FRTLT1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_VEGLT1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_FRT16",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_VEG23",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_FRUITEX",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_VEGETEX",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_TOTINDA",
@@ -1983,27 +1983,27 @@
     {
         "id": "METVL21_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "MAXVO2_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "FC60_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ACTIN11_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "ACTIN21_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PADUR1_",
@@ -2052,131 +2052,131 @@
     {
         "id": "_MINAC11",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_MINAC21",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "STRFREQ_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PAMISS1_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PAMIN11_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PAMIN21_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PA1MIN_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PAVIG11_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PAVIG21_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "PA1VIGM_",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PACAT1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PAINDX1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PA150R2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PA300R2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PA30021",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PASTRNG",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PAREC1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PASTAE1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_LMTACT1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_LMTWRK1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_LMTSCL1",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RFSEAT2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_RFSEAT3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_FLSHOT6",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_PNEUMO2",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     },
     {
         "id": "_AIDTST3",
         "description": "TODO",
-        "type": "delete"
+        "type": "auto"
     }
 ]
