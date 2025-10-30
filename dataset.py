@@ -164,11 +164,13 @@ class Dataset:
                 - y_train: numpy array of shape (N*ratio,). Training labels.
                 - y_val: numpy array of shape (N*(1-ratio),). Validation labels.
         """
+        N = np.shape(x_data)[0] # Number of datapoints
+        
         # Calculate split point
-        split_index = int(len(x_data) * ratio)
+        split_index = int(N * ratio)
 
         # Randomly shuffle all indices
-        indices = np.random.permutation(len(x_data))
+        indices = np.random.permutation(N)
 
         # Split indices according to ratio
         train_indices = indices[:split_index]
