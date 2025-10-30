@@ -9,10 +9,10 @@ MAX_ITERS = 200
 K_FOLD = 5
 DEGREE = 3
 
-def run_exp1():
+def run_exp2():
     print("Running Experiment 2")
     data = Data()
-    data.load_from_numpy_file("cleaned_data.npz")
+    data.load_from_csv("dataset", "metadata.json")
     data.feature_expansion(DEGREE)
     data.add_intercept()
     data.y_train = np.where(data.y_train == -1.0, 0.0, 1.0)
@@ -24,7 +24,7 @@ def run_exp1():
 
         m = [defaultdict(float) for _ in range(200)]
 
-        with open(f"gamma_{gamma}.csv", "w", ) as csvfile:
+        with open(f"exp2_gamma_{gamma}.csv", "w", ) as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Iteration", "Training Loss", "Validation Loss", "Weights Norm"])
 
@@ -43,4 +43,4 @@ def run_exp1():
                 writer.writerow([i, d["Training Loss"]/K_FOLD, d["Validation Loss"]/K_FOLD, d["Weights Norm"]/K_FOLD])
 
 if __name__ == "__main__":
-    run_exp1()
+    run_exp2()
