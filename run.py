@@ -13,12 +13,12 @@ def load_csv_and_save():
 def load_numpy_file():
     data = Data()
     data.load_from_numpy_file("cleaned_data.npz")
-    data.add_intercept()
     # data.feature_expansion(degree=2)
+    data.add_intercept()
     return data.x_train, data.y_train, data.x_test, data.test_ids, data.num_cont_features
 
 def main():
-    # load_csv_and_save()  # Only need to run once to create cleaned_data.npz
+    load_csv_and_save()  # Only need to run once to create cleaned_data.npz
     x_train, y_train, x_test, test_ids, num_cont_features = load_numpy_file()
     dataset = Dataset(x_train, y_train, num_cont_features)
 
