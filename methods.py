@@ -1,7 +1,9 @@
+import numpy as np
+
 from models import ModelBase
 from dataset import Dataset
 
-def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weights: bool = True) -> dict[str, list]:
+def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weights: bool = True, search_threshold_iterations: int = 0, threshold: float = 0.0) -> dict[str, list]:
     """Performs k-fold cross-validation and collects comprehensive metrics.
 
     Trains the model on k different train/validation splits and evaluates
@@ -44,7 +46,8 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weig
         "Precision": [],
         "F1 Score": [],
         "Mean": [],
-        "Std": []
+        "Std": [],
+        "Thresholds": [],
     }
     if add_weights:
         metrics["Weights"] = []
@@ -60,7 +63,10 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weig
         val_loss = model.score(y_val, x_val)
 
         # Generate predictions and compute classification metrics
-        y_pred = model.predict(x_val)
+        if (search_threshold_iterations > 0):
+            threshold = search_threshold(x_val, y_val, num_thresholds=search_threshold_iterations, model=model)
+
+        y_pred = model.predict(x_val, threshold=threshold)
         fold_metrics = model.get_metrics(y_val, y_pred)
 
         # Store metrics for this fold
@@ -81,3 +87,39 @@ def cross_validate(model: ModelBase, dataset: Dataset, k_fold: int = 5, add_weig
 
     print("\nCross-validation complete.")
     return metrics
+
+
+def search_threshold(x_val, y_val, num_thresholds=100, model: ModelBase = None) -> float:
+    """
+    Searches for the best threshold to convert raw model predictions into binary class labels (-1 and 1)
+    based on maximizing the F1 score.
+    
+    Args:
+        y_raw_predictions (np.ndarray): Raw predictions from the model (continuous values).
+        y_true (np.ndarray): True binary class labels (-1 and 1).
+        num_thresholds (int): Number of thresholds to evaluate.
+
+    Returns:
+        float: The threshold that maximizes the F1 score.
+    """
+    best_threshold = 0.0
+    best_f1_score = 0.0
+
+    # Search thresholds from min to max of raw predictions
+    thresholds = np.linspace(-1, 1, num=num_thresholds)
+    
+    for threshold in thresholds:
+        # Convert raw predictions to binary labels based on the current threshold
+        y_pred = model.predict(x_val, threshold=threshold)
+
+        # Calculate F1 score
+        fold_metrics = model.get_metrics(y_val, y_pred)
+        current_f1_score = fold_metrics["F1 Score"]
+
+        # Update best threshold if current F1 score is better
+        if current_f1_score > best_f1_score:
+            best_f1_score = current_f1_score
+            best_threshold = threshold
+
+    print(f"Best threshold found: {best_threshold} with F1 score: {best_f1_score}")
+    return best_threshold
