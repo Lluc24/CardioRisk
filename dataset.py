@@ -90,6 +90,19 @@ class Dataset:
             # Extract training data (k-1 folds)
             x_train = self.x_train[train_indices].copy()
             y_train = self.y_train[train_indices]
+            # # balance classes in y_train for training portion of the fold only
+            # np.random.seed()
+            # pos_indices = np.where(y_train == 1)[0]
+            # neg_indices = np.where(y_train == -1)[0]
+            # n_pos = len(pos_indices)
+            # n_neg = len(neg_indices)
+            # if n_neg > n_pos:
+            #     neg_indices = np.random.choice(neg_indices, n_pos, replace=False)
+            # else:
+            #     pos_indices = np.random.choice(pos_indices, n_neg, replace=False)
+            # selected_indices = np.concatenate([pos_indices, neg_indices])
+            # x_train= x_train[selected_indices]
+            # y_train= y_train[selected_indices]
 
             # Extract validation data (1 fold)
             x_val = self.x_train[val_indices].copy()
