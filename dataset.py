@@ -38,8 +38,11 @@ class Dataset:
             x_test: numpy array of shape (M, D) or None. Test feature matrix with
                    the same number of features D. Defaults to None.
         """
-        self.x_train = x_train
-        self.y_train = y_train
+        x_tr, y_tr, x_te, y_te = self._split_data_arrays(x_train, y_train, ratio=0.8)
+        self.x_train = x_tr
+        self.y_train = y_tr
+        self.x_test = x_te
+        self.y_test = y_te
         self.num_cont_features = num_cont_features
 
     def __len__(self):
@@ -120,24 +123,10 @@ class Dataset:
                 - x_val: numpy array of shape (N*(1-ratio), D). Validation features.
                 - y_train: numpy array of shape (N*ratio,). Training labels.
                 - y_val: numpy array of shape (N*(1-ratio),). Validation labels.
+                - mean: numpy generic. Mean of training features
+                - std: numpy generic. Standard deviation of training features
         """
-        # Calculate split point
-        split_index = int(len(self) * ratio)
-
-        # Randomly shuffle all indices
-        indices = np.random.permutation(len(self))
-
-        # Split indices according to ratio
-        train_indices = indices[:split_index]
-        val_indices = indices[split_index:]
-
-        # Extract training subset
-        x_train = self.x_train[train_indices].copy()
-        y_train = self.y_train[train_indices]
-
-        # Extract validation subset
-        x_val = self.x_train[val_indices].copy()
-        y_val = self.y_train[val_indices]
+        x_train, y_train, x_val, y_val = self._split_data_arrays(self.x_train, self.y_train, ratio)
 
         mean: np.generic = np.mean(x_train[:, 1:self.num_cont_features+1], axis=0)
         std: np.generic = np.std(x_train[:, 1:self.num_cont_features+1], axis=0)
@@ -146,3 +135,51 @@ class Dataset:
         x_val[:, 1:self.num_cont_features+1] = (x_val[:, 1:self.num_cont_features+1] - mean) / std
 
         return x_train, x_val, y_train, y_val, mean, std
+    
+    def get_test_set(self) -> tuple[np.ndarray, np.ndarray]:
+        """Returns the test set features and labels.
+
+        Returns:
+            tuple of (x_test, y_test):
+                - x_test: numpy array of shape (M, D). Test feature matrix.
+                - y_test: numpy array of shape (M,). Test labels.
+        """
+        return self.x_test, self.y_test
+    
+    @staticmethod
+    def _split_data_arrays(x_data, y_data, ratio: float = 0.8) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """Randomly splits the training data into train and validation sets.
+
+        Shuffles the entire training dataset and divides it into two subsets
+        according to the specified ratio.
+
+        Args:
+            ratio: float in (0, 1). Proportion of data to use for training.
+                  Default is 0.8 (80% training, 20% validation).
+
+        Returns:
+            tuple of (x_train, x_val, y_train, y_val):
+                - x_train: numpy array of shape (N*ratio, D). Training features.
+                - x_val: numpy array of shape (N*(1-ratio), D). Validation features.
+                - y_train: numpy array of shape (N*ratio,). Training labels.
+                - y_val: numpy array of shape (N*(1-ratio),). Validation labels.
+        """
+        # Calculate split point
+        split_index = int(len(x_data) * ratio)
+
+        # Randomly shuffle all indices
+        indices = np.random.permutation(len(x_data))
+
+        # Split indices according to ratio
+        train_indices = indices[:split_index]
+        val_indices = indices[split_index:]
+
+        # Extract training subset
+        x_train = x_data[train_indices].copy()
+        y_train = y_data[train_indices]
+
+        # Extract validation subset
+        x_rest = x_data[val_indices].copy()
+        y_rest = y_data[val_indices]
+
+        return x_train, y_train, x_rest, y_rest
