@@ -22,7 +22,7 @@ def main():
     x_train, y_train, x_test, test_ids, num_cont_features = load_numpy_file()
     dataset = Dataset(x_train, y_train, num_cont_features)
 
-    model = LogisticRegressionGD(max_iters=500)
+    model = LogisticRegressionGD(max_iters=750, gamma=0.7)
     metrics = cross_validate(model, dataset, search_threshold_iterations=1000)
     #metrics = cross_validate(model, dataset, k_fold=5, threshold=0.19)
 
