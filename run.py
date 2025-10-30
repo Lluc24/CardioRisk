@@ -17,7 +17,7 @@ def load_numpy_file():
     return data.x_train, data.y_train, data.x_test, data.test_ids, data.num_cont_features
 
 def main():
-    load_csv_and_save()  # Only need to run once to create cleaned_data.npz
+    #load_csv_and_save()  # Only need to run once to create cleaned_data.npz
     x_train, y_train, x_test, test_ids, num_cont_features = load_numpy_file()
     dataset = Dataset(x_train, y_train, num_cont_features)
 
@@ -26,13 +26,22 @@ def main():
 
     # Average weights and threshold from cross-validation
     weights = np.mean(metrics.pop('Weights'), axis=0)
-    threshold = np.mean(metrics.pop('Thresholds'))
+    threshold = float(np.mean(metrics.pop('Thresholds')))
 
     # Average mean and std from cross-validation
     mean = np.mean(metrics.pop('Mean'))
     std = np.mean(metrics.pop('Std'))
 
-    # Predict on test set
+    # Predict on local test set
+    x_test_local, y_test_local = dataset.get_test_set()
+    x_test_local[:, 1:num_cont_features] = (x_test_local[:, 1:num_cont_features] - mean) / std  # Standardize test set
+    y_te_local_pred = model.predict(x_test_local, threshold=threshold)
+    local_metrics = model.get_metrics(y_test_local, y_te_local_pred)
+    print("Local Test Set Metrics:", local_metrics)
+    print("Local Test Set Metrics:", local_metrics)
+
+    # Predict on online test set
+
     model.w = weights  # Set model weights
     x_test[:, 1:num_cont_features] = (x_test[:, 1:num_cont_features] - mean) / std  # Standardize test set
     y_te_pred = model.predict(x_test, threshold=threshold)
