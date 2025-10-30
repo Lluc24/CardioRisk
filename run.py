@@ -18,24 +18,33 @@ def load_numpy_file():
     return data.x_train, data.y_train, data.x_test, data.test_ids, data.num_cont_features
 
 def main():
-    load_csv_and_save()  # Only need to run once to create cleaned_data.npz
+    #load_csv_and_save()  # Only need to run once to create cleaned_data.npz
     x_train, y_train, x_test, test_ids, num_cont_features = load_numpy_file()
     dataset = Dataset(x_train, y_train, num_cont_features)
 
-    model = LogisticRegressionGD()
+    model = LogisticRegressionGD(max_iters=500)
     metrics = cross_validate(model, dataset, search_threshold_iterations=1000)
+    #metrics = cross_validate(model, dataset, k_fold=5, threshold=0.19)
 
     # Average weights and threshold from cross-validation
     weights = np.mean(metrics.pop('Weights'), axis=0)
-    threshold = np.mean(metrics.pop('Thresholds'))
+    threshold = float(np.mean(metrics.pop('Thresholds')))
 
     # Average mean and std from cross-validation
-    mean = np.mean(metrics.pop('Mean'))
-    std = np.mean(metrics.pop('Std'))
+    mean = np.mean(metrics.pop('Mean'), axis=0)
+    std = np.mean(metrics.pop('Std'), axis=0)
 
-    # Predict on test set
     model.w = weights  # Set model weights
-    x_test[:, 1:num_cont_features] = (x_test[:, 1:num_cont_features] - mean) / std  # Standardize test set
+
+    # Predict on local test set
+    x_test_local, y_test_local = dataset.get_test_set()
+    x_test_local[:, 1:num_cont_features+1] = (x_test_local[:, 1:num_cont_features+1] - mean) / std  # Standardize test set
+    y_te_local_pred = model.predict(x_test_local, threshold=threshold)
+    local_metrics = model.get_metrics(y_test_local, y_te_local_pred)
+    print("Local Test Set Metrics:", local_metrics)
+
+    # Predict on online test set
+    x_test[:, 1:num_cont_features+1] = (x_test[:, 1:num_cont_features+1] - mean) / std  # Standardize test set
     y_te_pred = model.predict(x_test, threshold=threshold)
 
     # Create submission file
