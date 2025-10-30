@@ -38,7 +38,6 @@ def main():
     y_te_local_pred = model.predict(x_test_local, threshold=threshold)
     local_metrics = model.get_metrics(y_test_local, y_te_local_pred)
     print("Local Test Set Metrics:", local_metrics)
-    print("Local Test Set Metrics:", local_metrics)
 
     # Predict on online test set
 
