@@ -5,31 +5,27 @@ from implementations import compute_gradient, mean_squared_error
 from dataset import Dataset
 import numpy as np
 
+MAX_ITERS = 200
 
 def run_exp1():
     print("Running Experiment 1")
     data = Data()
     data.load_from_csv("dataset", "metadata.json")
     data.add_intercept()
-    data.load_from_numpy_file("cleaned_data.npz")
     dataset = Dataset(data.x_train, data.y_train, data.num_cont_features)
 
-    k_fold = 5
+    for gamma in [0.001, 0.005, 0.01]:
 
-    print(f"Starting {k_fold}-fold cross-validation")
-
-    for gamma in [0.001, 0.01]:
-
-        m = [defaultdict(float) for _ in range(200)]
+        m = [defaultdict(float) for _ in range(MAX_ITERS)]
 
         with open(f"gamma_{gamma}.csv", "w", ) as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(["Iteration", "Training Loss", "Validation Loss", "Weights Norm"])
 
             # Iterate through each fold
-            for k, (x_tr, y_tr, x_val, y_val, _, _) in enumerate(dataset.k_fold_generator(k_fold)):
+            for k, (x_tr, y_tr, x_val, y_val, _, _) in enumerate(dataset.k_fold_generator()):
                 w = np.zeros(x_tr.shape[1])
-                for i in range(200):
+                for i in range(MAX_ITERS):
                     gradient: np.ndarray = compute_gradient(y_tr, x_tr, w)
                     w = w - gamma * gradient
                     m[i]["Weights Norm"] += np.linalg.norm(w).item()
