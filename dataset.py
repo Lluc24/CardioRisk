@@ -50,7 +50,7 @@ class Dataset:
         """
         return len(self.x_train)
 
-    def k_fold_generator(self, k: int) -> Generator[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.generic, np.generic], None, None]:
+    def k_fold_generator(self, k: int = 5) -> Generator[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.generic, np.generic], None, None]:
         """Generates k-fold cross-validation splits as a generator.
 
         Randomly shuffles the training data and divides it into k approximately

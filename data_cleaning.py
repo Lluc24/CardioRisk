@@ -165,6 +165,8 @@ class Data:
         # Concatenate expanded continuous and categorical features
         self.x_train = np.hstack([x_train_poly, x_train_cat])
         self.x_test = np.hstack([x_test_poly, x_test_cat])
+
+        self.num_cont_features = len(x_train_poly)
         print(f"Expanded features to degree {degree}, new shape: {self.x_train.shape}")
 
 
@@ -263,6 +265,8 @@ class Data:
         # Load raw CSV data
         self.x_train, self.x_test, self.y_train, self.train_ids, self.test_ids = load_csv_data(dataset_path)
 
+        self._filter_nan_threshold(threshold=0.1)
+
         # Load and validate metadata
         metadata: list[dict] = process_metadata(metadata_path, self.headers)
 
@@ -270,6 +274,9 @@ class Data:
         self.num_cont_features = 0
         for feature in metadata:
             feature_id: str = feature["id"]
+            if feature_id not in self.headers:
+                continue  # Feature was removed due to NaN filtering
+
             index: int = self.headers.index(feature_id)
 
             if feature["type"] == "delete":
@@ -293,10 +300,32 @@ class Data:
                 self.headers.append(header)
                 print(f"Processed categorical feature {feature_id}, new shape: {self.x_train.shape}")
 
+            elif feature["type"] == "auto":
+                self._auto_process_feature(feature, index)
+                print(f"Auto-processed feature {feature_id}, new shape: {self.x_train.shape}")
+
         # Remove columns with zero variance (all values equal)
         self._remove_homogeneous_columns()
 
         print(f"Finished cleaning data")
+        print(f"Final data shape: {self.x_train.shape}, with {self.num_cont_features} continuous features")
+
+
+    def _auto_process_feature(self, feature: dict, column_index: int) -> None:
+        "Process the feature automatically based on its characteristics."
+        unique_values = np.unique(self.x_train[:, column_index])
+        if len(unique_values) <= 10:
+            values = np.concat((self.x_train[:, column_index], self.x_test[:, column_index]), axis=None)
+            feature["vocabulary"] = np.unique(values)
+            self._one_hot_encoding(feature, column_index)
+            header = self.headers.pop(column_index)
+            self.headers.append(header)
+            print(f"Auto-processed feature {feature['id']} as categorical, new shape: {self.x_train.shape}")
+        else:
+            feature["mapping"] = [[np.nan, "mean"]]
+            self._solve_mapping(feature, column_index)
+            self.num_cont_features += 1
+            print(f"Auto-processed feature {feature['id']} as continuous, new shape: {self.x_train.shape}, now {self.num_cont_features} continuous features processed")
 
 
     def _one_hot_encoding(self, feature: dict, column_index: int) -> None:
@@ -444,6 +473,23 @@ class Data:
                     print(f"Mapping feature {feature['id']} value {key} to {value}")
 
 
+    def _filter_nan_threshold(self, threshold: float) -> None:
+        """Removes columns from x_train and x_test with NaN ratio above threshold.
+
+        Args:
+            threshold: float. Maximum allowed ratio of NaN values in a column.
+                       Columns with a higher ratio will be removed.
+        """
+        nan_ratio_train: np.ndarray = np.mean(np.isnan(self.x_train), axis=0)
+        nan_ratio_test: np.ndarray = np.mean(np.isnan(self.x_test), axis=0)
+        to_keep: np.ndarray = (nan_ratio_train <= threshold) & (nan_ratio_test <= threshold)
+
+        self.x_train = self.x_train[:, to_keep]
+        self.x_test = self.x_test[:, to_keep]
+        self.headers = [header for i, header in enumerate(self.headers) if to_keep[i]]
+        print(f"Filtered columns with NaN ratio above {threshold}, new shape: {self.x_train.shape}")
+
+
 def get_headers(dataset_path: str) -> list[str]:
     """Extracts feature column headers from the training CSV file.
 
@@ -518,7 +564,7 @@ def process_metadata(json_path: str, headers: list[str]) -> list[dict]:
             raise ValueError(f"Feature missing required fields {feature}")
 
         # Check correct type
-        if feature["type"] not in ("continuous", "categorical", "delete"):
+        if feature["type"] not in ("continuous", "categorical", "auto"):
             raise ValueError(f"Feature '{feature['id']}' has invalid type '{feature['type']}'")
 
         # If type is categorical, check and process the vocabulary field
@@ -542,8 +588,8 @@ def process_metadata(json_path: str, headers: list[str]) -> list[dict]:
         ids.add(feature["id"])
 
         # Check id in headers
-        if feature["id"] not in headers:
-            raise ValueError(f"Feature id '{feature['id']}' not found in headers.")
+        # if feature["id"] not in headers:
+        #      raise ValueError(f"Feature id '{feature['id']}' not found in headers.")
 
         # Validate mapping if present
         if "mapping" in feature:
