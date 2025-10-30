@@ -3,17 +3,18 @@ from helpers import create_csv_submission
 from models import *
 from data_cleaning import Data
 from methods import cross_validate
+import numpy as np
 
 def load_csv_and_save():
     data = Data()
     data.load_from_csv("dataset", "metadata.json")
-    # data.feature_expansion(degree=2)
-    data.add_intercept()
     data.save_to_numpy_file("cleaned_data.npz")
 
 def load_numpy_file():
     data = Data()
     data.load_from_numpy_file("cleaned_data.npz")
+    data.add_intercept()
+    # data.feature_expansion(degree=2)
     return data.x_train, data.y_train, data.x_test, data.test_ids, data.num_cont_features
 
 def main():
