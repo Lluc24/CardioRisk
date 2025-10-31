@@ -35,10 +35,11 @@ class Data:
 
     The cleaning pipeline includes:
     1. Loading raw data from CSV files
-    2. Applying feature-specific mappings (value replacements, range binning)
-    3. One-hot encoding categorical features
-    4. Removing homogeneous columns (zero variance)
-    5. Standardizing continuous features (zero mean, unit variance)
+    2. Filtering features with high NaN ratio (default: >10%)
+    3. Applying feature-specific mappings (value replacements, range binning)
+    4. One-hot encoding categorical features
+    5. Automatic feature type detection (for "auto" type features)
+    6. Removing homogeneous columns (zero variance)
 
     Final Dataset Structure:
         After processing, the feature matrix has a specific column ordering:
@@ -85,11 +86,11 @@ class Data:
 
         This method orchestrates the entire preprocessing pipeline:
         - Loads raw CSV data (x_train, x_test, y_train, train_ids, test_ids)
-        - Processes features according to metadata (delete, continuous, categorical)
+        - Filters out features with NaN ratio above threshold (default: 10%)
+        - Processes features according to metadata (delete, continuous, categorical, auto)
         - Applies mappings and transformations
         - One-hot encodes categorical features
         - Removes homogeneous columns
-        - Standardizes continuous features
 
         Args:
             dataset_path: str. Path to directory containing CSV files:
@@ -243,12 +244,15 @@ class Data:
 
         Pipeline steps:
         1. Load raw CSV data
-        2. Process each feature according to its type:
+        2. Filter out columns with NaN ratio above threshold (default: 10%)
+        3. Load and validate metadata
+        4. Process each feature according to its type:
            - delete: Remove the column entirely
            - continuous: Apply mappings, track for standardization
            - categorical: Apply mappings, one-hot encode
-        3. Remove homogeneous (zero-variance) columns
-        4. Standardize continuous features to zero mean and unit variance
+           - auto: Automatically determine if feature is categorical (<= 10 unique values)
+                  or continuous (> 10 unique values), then process accordingly
+        5. Remove homogeneous (zero-variance) columns
 
         Final column ordering:
         - Continuous features are placed on the left (columns 0 to num_cont_features-1)
@@ -314,7 +318,36 @@ class Data:
 
 
     def _auto_process_feature(self, feature: dict, column_index: int) -> None:
-        "Process the feature automatically based on its characteristics."
+        """Automatically determines feature type and processes it accordingly.
+
+        Analyzes the feature's unique values in the training set to decide whether
+        it should be treated as categorical or continuous. Features with 10 or fewer
+        unique values are treated as categorical, while features with more unique
+        values are treated as continuous.
+
+        For categorical features:
+        - Builds vocabulary from unique values across both train and test sets
+        - Applies one-hot encoding
+        - Moves the feature to the right side of the dataset
+
+        For continuous features:
+        - Adds a mapping to replace NaN values with the column mean
+        - Applies the mapping
+        - Increments num_cont_features counter
+
+        Args:
+            feature: dict. Feature metadata containing 'id' and 'description'.
+                    The method adds either 'vocabulary' (categorical) or
+                    'mapping' (continuous) to the feature dict.
+            column_index: int. Index of the column to process in x_train and x_test.
+
+        Side Effects:
+            Modifies feature dict by adding 'vocabulary' or 'mapping' fields.
+            Modifies x_train and x_test (one-hot encoding for categorical features).
+            Updates num_cont_features if feature is determined to be continuous.
+            Updates headers (moves categorical feature headers to the end).
+            Prints progress information to stdout.
+        """
         unique_values = np.unique(self.x_train[:, column_index])
         if len(unique_values) <= 10:
             # Combine train and test column values to determine vocabulary
@@ -477,11 +510,27 @@ class Data:
 
 
     def _filter_nan_threshold(self, threshold: float) -> None:
-        """Removes columns from x_train and x_test with NaN ratio above threshold.
+        """Removes columns with NaN ratio above threshold from both train and test sets.
+
+        Filters out features where the proportion of NaN values exceeds the specified
+        threshold in either the training or test set. This removes features with too
+        much missing data, which could negatively impact model performance.
+
+        A column is kept only if its NaN ratio is <= threshold in BOTH train and test sets.
 
         Args:
-            threshold: float. Maximum allowed ratio of NaN values in a column.
-                       Columns with a higher ratio will be removed.
+            threshold: float. Maximum allowed ratio of NaN values (0.0 to 1.0).
+                      For example, threshold=0.1 means columns with >10% NaN values
+                      will be removed.
+
+        Side Effects:
+            Modifies x_train and x_test by removing columns exceeding threshold.
+            Updates headers list to match the remaining columns.
+            Prints the new shape to stdout.
+
+        Example:
+            If threshold=0.1 and a column has 15% NaN values in training set,
+            that column will be removed from both x_train and x_test.
         """
         nan_ratio_train: np.ndarray = np.mean(np.isnan(self.x_train), axis=0)
         nan_ratio_test: np.ndarray = np.mean(np.isnan(self.x_test), axis=0)
@@ -527,7 +576,7 @@ def process_metadata(json_path: str, headers: list[str]) -> list[dict]:
     Validation checks:
     - All leaf values and dict keys must be strings (before conversion)
     - Each feature must have 'id', 'description', and 'type' fields
-    - Type must be one of: 'continuous', 'categorical', 'delete'
+    - Type must be one of: 'continuous', 'categorical', 'delete', 'auto'
     - All feature IDs must exist in the headers list
     - All features in headers must be present in metadata
     - No duplicate feature IDs
