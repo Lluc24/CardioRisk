@@ -24,6 +24,28 @@ def mean_squared_error_gd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, 
     loss: np.generic = mean_squared_error(y, tx, w)
     return w, loss
 
+def mean_squared_error_gd_balanced(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
+    """The Gradient Descent (GD) algorithm with balanced loss.
+
+        Args:
+            y: numpy array of shape=(N, )
+            tx: numpy array of shape=(N, D)
+            initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
+            max_iters: a scalar denoting the total number of iterations of GD
+            gamma: a scalar denoting the stepsize
+
+        Returns:
+            w: The last weight vector of the method
+            loss: the value of the loss (MSE) using the last weight vector
+        """
+    w = initial_w
+    for _ in range(max_iters):
+        gradient: np.ndarray = compute_balanced_gradient(y, tx, w)
+        w = w - gamma * gradient
+
+    loss: np.generic = mean_squared_balanced_error(y, tx, w)
+    return w, loss
+
 
 def mean_squared_error_sgd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
     """The Stochastic Gradient Descent algorithm (SGD).
@@ -113,6 +135,26 @@ def logistic_regression(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, ma
     loss: np.generic = logistic_loss(y, tx, w)
     return w, loss
 
+def logistic_regression_balanced(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
+    """Logistic regression using gradient descent with balanced loss.
+
+    Args:
+        y: numpy array of shape=(N, )
+        tx: numpy array of shape=(N, D)
+        initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
+        max_iters: a scalar denoting the total number of iterations of the method
+        gamma: a scalar denoting the stepsize
+    Returns:
+        w: The last weight vector of the method
+        loss: the value of the loss (logistic loss) using the last weight vector
+    """
+    w = initial_w
+    for _ in range(max_iters):
+        gradient: np.ndarray = logistic_gradient_balanced(y, tx, w)
+        w = w - gamma * gradient
+
+    loss: np.generic = logistic_loss_balanced(y, tx, w)
+    return w, loss
 
 def reg_logistic_regression(y: np.ndarray, tx: np.ndarray, lambda_: float, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
     """Regularized logistic regression using gradient descent.
@@ -136,7 +178,6 @@ def reg_logistic_regression(y: np.ndarray, tx: np.ndarray, lambda_: float, initi
     loss: np.generic = logistic_loss(y, tx, w)
     return w, loss
 
-
 ########################################################################################3
 # Auxiliar Functions
 ########################################################################################3
@@ -157,6 +198,21 @@ def mean_squared_error(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.gener
     loss: np.generic = 1 / (2 * n) * error.T @ error # type: ignore
     return loss
 
+def mean_squared_balanced_error(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.generic:
+    """Calculate the loss using MSE
+
+    Args:
+        y: numpy array of shape=(N, )
+        tx: numpy array of shape=(N, D)
+        w: numpy array of shape=(D, ). The vector of model parameters.
+
+    Returns:
+        the value of the loss (a scalar), corresponding to the input parameters w.
+    """
+    n: int  = y.shape[0]
+    error: np.ndarray = compute_balanced_errors(y, tx, w)
+    loss: np.generic = 1 / (2 * n) * error.T @ error # type: ignore
+    return loss
 
 def compute_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray:
     """Computes the gradient at w of the Mean Squared Error loss function.
@@ -174,6 +230,42 @@ def compute_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray
     gradient: np.ndarray = -1 / n * tx.T @ errors
     return gradient
 
+def compute_balanced_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray:
+    """Computes the gradient at w of the Mean Squared Error loss function.
+
+    Args:
+        y: numpy array of shape=(N, )
+        tx: numpy array of shape=(N, D)
+        w: numpy array of shape=(D, ). The vector of model parameters.
+
+    Returns:
+        An numpy array of shape (D, ) (same shape as w), containing the gradient of the loss at w.
+    """
+    n = y.shape[0]
+    
+    errors: np.ndarray = compute_balanced_errors(y, tx, w)
+    gradient: np.ndarray = -1 / n * tx.T @ errors
+    return gradient
+
+def compute_balanced_errors(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray:
+    """Calculate the weighted error, it penalizes more false negatives in order to account for class imbalance.
+
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,D)
+        w: shape=(D,). The vector of model parameters.
+
+    Returns:
+        the vector of errors (shape=(N, )), corresponding to the input parameters w.
+    """
+    error = y - (tx @ w)
+    correction_factor = negative_positive_ratio(y)
+    
+    if correction_factor > 1:  # This will be the case in our dataset, the other case is included to make the function more general
+        error[error >= 0] *= correction_factor
+    else:
+        error[error <= 0] *= correction_factor
+    return error
 
 def batch_iter(y: np.ndarray, tx: np.ndarray, batch_size: int, num_batches: int = 1, shuffle: bool = True) -> Generator[tuple[np.ndarray, np.ndarray], None, None]:
     """
@@ -234,7 +326,6 @@ def batch_iter(y: np.ndarray, tx: np.ndarray, batch_size: int, num_batches: int 
         )  # The first data point of the following batch
         yield y[start_index:end_index], tx[start_index:end_index]
 
-
 def sigmoid(t: np.ndarray | np.generic) -> np.ndarray | np.generic:
     """Apply the sigmoid function on t.
 
@@ -245,7 +336,6 @@ def sigmoid(t: np.ndarray | np.generic) -> np.ndarray | np.generic:
         The sigmoid of t.
     """
     return 1 / (1 + np.exp(-t))
-
 
 def logistic_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.generic:
     """Compute the cost by negative log likelihood.
@@ -260,6 +350,29 @@ def logistic_loss(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.generic:
     """
     t = tx @ w
     loss: np.generic = np.mean(-y * t + np.log(1 + np.exp(t)))
+    return loss
+
+def logistic_loss_balanced(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.generic:
+    """Compute the cost by negative log likelihood with class balancing.
+
+    Args:
+        y: numpy array of shape=(N, )
+        tx: numpy array of shape=(N, D)
+        w: numpy array of shape=(D, ). The vector of model parameters.
+
+    Returns:
+        The negative log likelihood.
+    """
+    t = tx @ w
+    correction_factor = negative_positive_ratio(y)
+    loss_vector = -y * t + np.log(1 + np.exp(t))
+    
+    if correction_factor > 1:
+        loss_vector[y == 1] *= correction_factor
+    else:
+        loss_vector[y == -1] *= correction_factor
+        
+    loss: np.generic = np.mean(loss_vector)
     return loss
 
 
@@ -279,6 +392,28 @@ def logistic_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarra
     gradient: np.ndarray = 1 / n * tx.T @ (s - y)
     return gradient
 
+def logistic_gradient_balanced(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray:
+    """compute the gradient of loss accounting for data imbalance.
+
+    Args:
+        y:  shape=(N, )
+        tx: shape=(N, D)
+        w:  shape=(D, ).
+
+    Returns:
+        a vector of shape (D )
+    """
+    n = y.shape[0]
+    correction_factor = negative_positive_ratio(y)
+    s: np.ndarray = sigmoid(tx@w)
+    neg_indices = np.where(y == -1)[0]
+    pos_indices = np.where(y == 1)[0]
+    if correction_factor > 1:
+        s[pos_indices] *= correction_factor
+    else:
+        s[neg_indices] *= correction_factor
+    gradient: np.ndarray = 1 / n * tx.T @ (s - y)
+    return gradient
 
 def build_poly(x: np.ndarray, degree: int) -> np.ndarray:
     """Polynomial basis functions for input data x, for j=1 up to j=degree.
@@ -296,3 +431,22 @@ def build_poly(x: np.ndarray, degree: int) -> np.ndarray:
     # We reshape it to have all features for a single sample in a row.
     poly: np.ndarray = poly.reshape(num_samples, num_features * degree)
     return poly
+
+def negative_positive_ratio(y: np.ndarray) -> float:
+    """Compute the ratio of negative to positive samples in y.
+
+    Args:
+        y: numpy array of shape=(N, )
+    Returns:
+        ratio: float
+    """
+    # count labels in y (assumes labels are -1 and 1)
+    neg_count = np.count_nonzero(y == -1)
+    pos_count = np.count_nonzero(y == 1)
+
+    # to avoid division by zero
+    if neg_count == 0:
+        return 1.0
+
+    correction_factor = neg_count / pos_count
+    return correction_factor
