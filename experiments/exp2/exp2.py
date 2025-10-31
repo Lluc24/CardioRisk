@@ -1,46 +1,42 @@
 from collections import defaultdict
 import csv
 from data_cleaning import Data
-from implementations import compute_gradient, mean_squared_error, logistic_gradient, logistic_loss
+from implementations import compute_gradient, mean_squared_error
 from dataset import Dataset
 import numpy as np
 
+from methods import cross_validate
+from models import RegularizedLogisticRegressionGD, RidgeRegression
+
 MAX_ITERS = 200
-K_FOLD = 5
+GAMMA = 0.01
+LAMBDAS = [0.0000000001, 0.000001, 0.001, 0.1]
 DEGREE = 3
 
-def run_exp2():
-    print("Running Experiment 2")
+def run_exp5():
+    print("Running Experiment 5")
     data = Data()
     data.load_from_csv("dataset", "metadata.json")
     data.feature_expansion(DEGREE)
     data.add_intercept()
-    data.y_train = np.where(data.y_train == -1.0, 0.0, 1.0)
     dataset = Dataset(data.x_train, data.y_train, data.num_cont_features)
 
-    print(f"Starting {K_FOLD}-fold cross-validation")
+    with open(f"exp5.csv", "w") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["Lambda", "Training Loss", "Validation Loss", "Weights Norm", "F1 Score", "Accuracy", "Threshold"])
 
-    for gamma in [0.1, 0.3]:
+        for lambda_ in LAMBDAS:
+            model = RidgeRegression(max_iters=MAX_ITERS, gamma=GAMMA, lambda_=lambda_)
+            metrics = cross_validate(model, dataset, add_weights=True, search_threshold_iterations=100)
 
-        m = [defaultdict(float) for _ in range(200)]
+            tr_loss = np.mean(metrics["Train Loss"]).item()
+            val_loss = np.mean(metrics["Validation Loss"]).item()
+            w_norm = np.mean(metrics["Weights"], axis=(1, 0)).item()
+            acc = np.mean(metrics["Accuracy"]).item()
+            f1 = np.mean(metrics["F1 Score"]).item()
+            threshold = np.mean(metrics["Thresholds"]).item()
 
-        with open(f"exp2_gamma_{gamma}.csv", "w") as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(["Iteration", "Training Loss", "Validation Loss", "Weights Norm"])
-
-            # Iterate through each fold
-            for k, (x_tr, y_tr, x_val, y_val, _, _) in enumerate(dataset.k_fold_generator(K_FOLD)):
-                w = np.zeros(x_tr.shape[1])
-                for i in range(MAX_ITERS):
-                    gradient: np.ndarray = logistic_gradient(y_tr, x_tr, w)
-                    w = w - gamma * gradient
-                    m[i]["Weights Norm"] += np.linalg.norm(w).item()
-                    m[i]["Training Loss"] += logistic_loss(y_tr, x_tr, w).item()
-                    m[i]["Validation Loss"] += logistic_loss(y_val, x_val, w).item()
-                print(f"Fold {k+1} finished for {gamma = }")
-
-            for i, d in enumerate(m):
-                writer.writerow([i, d["Training Loss"]/K_FOLD, d["Validation Loss"]/K_FOLD, d["Weights Norm"]/K_FOLD])
+            writer.writerow([lambda_, tr_loss, val_loss, w_norm, f1, acc, threshold])
 
 if __name__ == "__main__":
-    run_exp2()
+    run_exp5()
