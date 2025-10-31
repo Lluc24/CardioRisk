@@ -7,16 +7,16 @@ from methods import cross_validate
 from models import LogisticRegressionGD
 
 MAX_ITERS = 300
-GAMMAS = np.logspace(-2, 0, 10)
+GAMMAS = []
 
-def run_exp1():
-    print("Running Experiment 4")
+def run_exp():
+    print("Running Experiment lambda_LogR")
     data = Data()
     data.load_from_csv("dataset", "metadata.json")
     data.add_intercept()
     dataset = Dataset(data.x_train, data.y_train, data.num_cont_features)
 
-    with open(f"lambda_RG.csv", "w") as csvfile:
+    with open(f"lambda_LogR.csv", "w") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["Lambda", "F1 Score", "Accuracy", "Threshold"])
 
@@ -31,4 +31,4 @@ def run_exp1():
             writer.writerow([gamma, f1, acc, threshold])
 
 if __name__ == "__main__":
-    run_exp1()
+    run_exp()

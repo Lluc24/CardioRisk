@@ -166,7 +166,9 @@ class Data:
         self.x_train = np.hstack([x_train_poly, x_train_cat])
         self.x_test = np.hstack([x_test_poly, x_test_cat])
 
-        self.num_cont_features = len(x_train_poly)
+        # Number of continuous features after expansion is the number of columns
+        # in the expanded polynomial matrix (not the number of samples).
+        self.num_cont_features = x_train_poly.shape[1]
         print(f"Expanded features to degree {degree}, new shape: {self.x_train.shape}")
 
 
@@ -315,7 +317,8 @@ class Data:
         "Process the feature automatically based on its characteristics."
         unique_values = np.unique(self.x_train[:, column_index])
         if len(unique_values) <= 10:
-            values = np.concat((self.x_train[:, column_index], self.x_test[:, column_index]), axis=None)
+            # Combine train and test column values to determine vocabulary
+            values = np.concatenate((self.x_train[:, column_index], self.x_test[:, column_index]), axis=None)
             feature["vocabulary"] = np.unique(values)
             self._one_hot_encoding(feature, column_index)
             header = self.headers.pop(column_index)
