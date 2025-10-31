@@ -12,8 +12,7 @@ GAMMAS = np.logspace(-2, 0, 10)
 def run_exp1():
     print("Running Experiment 4")
     data = Data()
-    #data.load_from_csv("dataset", "metadata.json")
-    data.load_from_numpy_file("cleaned_data.npz")
+    data.load_from_csv("dataset", "metadata.json")
     data.add_intercept()
     dataset = Dataset(data.x_train, data.y_train, data.num_cont_features)
 
