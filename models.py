@@ -20,7 +20,7 @@ Models included:
 import numpy as np
 from abc import ABC, abstractmethod
 
-from implementations import mean_squared_error_gd, mean_squared_error, logistic_regression, sigmoid, logistic_loss, \
+from implementations import mean_squared_error_gd, mean_squared_error_gd_balanced, mean_squared_error, logistic_regression, sigmoid, logistic_loss, logistic_regression_balanced, \
     reg_logistic_regression, least_squares, ridge_regression
 
 
@@ -266,7 +266,7 @@ class MSEGradientDescent(LeastSquares):
                   If None, initializes to zeros.
     """
 
-    def __init__(self, max_iters: int = 200, gamma: float = 0.1, initial_w: np.ndarray = None):
+    def __init__(self, max_iters: int = 200, gamma: float = 0.1, initial_w: np.ndarray = None, balance_loss: bool = False):
         """Initializes the Gradient Descent model.
 
         Args:
@@ -279,6 +279,7 @@ class MSEGradientDescent(LeastSquares):
         self.max_iters = max_iters
         self.gamma = gamma
         self.initial_w = initial_w
+        self.balance_loss = balance_loss
 
     def fit(self, y: np.ndarray, tx: np.ndarray):
         """Fits the model using Gradient Descent.
@@ -299,9 +300,14 @@ class MSEGradientDescent(LeastSquares):
             self.initial_w = np.zeros(tx.shape[1])
 
         # Run gradient descent optimization
-        self.w, self.loss = mean_squared_error_gd(
-            y, tx, self.initial_w, self.max_iters, self.gamma
-        )
+        if self.balance_loss:
+            self.w, self.loss = mean_squared_error_gd_balanced(
+                y, tx, self.initial_w, self.max_iters, self.gamma
+            )
+        else:
+            self.w, self.loss = mean_squared_error_gd(
+                y, tx, self.initial_w, self.max_iters, self.gamma
+            )
         return self.w, self.loss
 
     def __str__(self):
@@ -414,7 +420,7 @@ class LogisticRegressionGD(ModelBase):
                   If None, initializes to zeros.
     """
 
-    def __init__(self, max_iters: int = 200, gamma: float = 0.7, initial_w: np.ndarray = None):
+    def __init__(self, max_iters: int = 200, gamma: float = 0.7, initial_w: np.ndarray = None, balance_loss: bool = False):
         """Initializes the Logistic Regression model.
 
         Args:
@@ -423,11 +429,13 @@ class LogisticRegressionGD(ModelBase):
                   Note: Logistic regression often uses higher learning rates than linear regression.
             initial_w: numpy array of shape (D,) or None. Initial weight vector.
                       If None, will be initialized to zeros during fit(). Default: None.
+            balance_loss: bool. Whether to use balanced loss during training. Default: False.
         """
         super().__init__()
         self.max_iters = max_iters
         self.gamma = gamma
         self.initial_w = initial_w
+        self.balance_loss = balance_loss
 
     def f(self, x: np.ndarray) -> np.ndarray:
         """Applies the logistic model to input data.
@@ -471,9 +479,14 @@ class LogisticRegressionGD(ModelBase):
         y = np.where(y == -1.0, 0.0, 1.0)
 
         # Run gradient descent optimization
-        self.w, self.loss = logistic_regression(
-            y, tx, self.initial_w, self.max_iters, self.gamma
-        )
+        if self.balance_loss:
+            self.w, self.loss = logistic_regression_balanced(
+                y, tx, self.initial_w, self.max_iters, self.gamma
+            )
+        else:
+            self.w, self.loss = logistic_regression(
+                y, tx, self.initial_w, self.max_iters, self.gamma
+            )
         return self.w, self.loss
 
     def predict(self, tx: np.ndarray, threshold: float | None = None) -> np.ndarray:
