@@ -1,271 +1,464 @@
+"""
+Core machine learning algorithm implementations.
+
+This module provides implementations of fundamental ML algorithms and their
+associated loss functions, gradients, and utility functions:
+
+Main Algorithms:
+- Gradient Descent (GD) for Linear Regression
+- Stochastic Gradient Descent (SGD) for Linear Regression
+- Least Squares (Normal Equation)
+- Ridge Regression
+- Logistic Regression with Gradient Descent
+- Regularized Logistic Regression
+
+Balanced Variants:
+- Balanced versions of algorithms to handle class imbalance
+- Custom loss weighting for minority class
+
+Utility Functions:
+- Loss computation (MSE, Logistic Loss)
+- Gradient computation
+- Mini-batch iteration
+- Polynomial feature expansion
+- Sigmoid activation
+
+All implementations follow a consistent interface and are designed for
+binary classification tasks with labels in {-1, 1}.
+"""
+
 from typing import Generator
 import numpy as np
 
 
+################################################################################
+# Main Algorithm Implementations
+################################################################################
+
+
 def mean_squared_error_gd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
-    """The Gradient Descent (GD) algorithm.
+    """Linear regression using Gradient Descent (GD) with Mean Squared Error loss.
 
-        Args:
-            y: numpy array of shape=(N, )
-            tx: numpy array of shape=(N, D)
-            initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
-            max_iters: a scalar denoting the total number of iterations of GD
-            gamma: a scalar denoting the stepsize
+    Iteratively updates weights by moving in the direction of steepest descent
+    of the MSE loss function. Uses the full dataset at each iteration.
 
-        Returns:
-            w: The last weight vector of the method
-            loss: the value of the loss (MSE) using the last weight vector
-        """
+    Args:
+        y: numpy array of shape=(N,). Target values.
+        tx: numpy array of shape=(N, D). Feature matrix with N samples and D features.
+        initial_w: numpy array of shape=(D,). Initial weights for optimization.
+        max_iters: int. Maximum number of gradient descent iterations.
+        gamma: float. Learning rate (step size) for gradient descent.
+
+    Returns:
+        tuple containing:
+            - w (np.ndarray): Final weight vector after max_iters iterations, shape (D,).
+            - loss (np.generic): Final MSE loss value (scalar).
+
+    Note:
+        This is a batch gradient descent algorithm. For large datasets,
+        consider using mean_squared_error_sgd instead.
+    """
     w = initial_w
+    # Perform gradient descent iterations
     for _ in range(max_iters):
         gradient: np.ndarray = compute_gradient(y, tx, w)
         w = w - gamma * gradient
 
+    # Compute final loss
     loss: np.generic = mean_squared_error(y, tx, w)
     return w, loss
 
+
 def mean_squared_error_gd_balanced(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
-    """The Gradient Descent (GD) algorithm with balanced loss.
+    """Linear regression using GD with class-balanced MSE loss.
 
-        Args:
-            y: numpy array of shape=(N, )
-            tx: numpy array of shape=(N, D)
-            initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
-            max_iters: a scalar denoting the total number of iterations of GD
-            gamma: a scalar denoting the stepsize
+    Similar to standard GD but applies higher weight to errors from the
+    minority class. Useful for imbalanced datasets where one class has
+    significantly fewer samples than the other.
 
-        Returns:
-            w: The last weight vector of the method
-            loss: the value of the loss (MSE) using the last weight vector
-        """
+    Args:
+        y: numpy array of shape=(N,). Target values in {-1, 1}.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        initial_w: numpy array of shape=(D,). Initial weights.
+        max_iters: int. Number of iterations.
+        gamma: float. Learning rate.
+
+    Returns:
+        tuple containing:
+            - w (np.ndarray): Final weight vector, shape (D,).
+            - loss (np.generic): Final balanced MSE loss (scalar).
+
+    Note:
+        The balancing factor is computed as ratio of negative to positive samples.
+        Errors from the minority class are weighted proportionally higher.
+    """
     w = initial_w
+    # Perform balanced gradient descent iterations
     for _ in range(max_iters):
         gradient: np.ndarray = compute_balanced_gradient(y, tx, w)
         w = w - gamma * gradient
 
+    # Compute final balanced loss
     loss: np.generic = mean_squared_balanced_error(y, tx, w)
     return w, loss
 
 
 def mean_squared_error_sgd(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
-    """The Stochastic Gradient Descent algorithm (SGD).
+    """Linear regression using Stochastic Gradient Descent (SGD) with MSE loss.
 
-        Args:
-            y: numpy array of shape=(N, )
-            tx: numpy array of shape=(N, D)
-            initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
-            max_iters: a scalar denoting the total number of iterations of SGD
-            gamma: a scalar denoting the stepsize
+    Updates weights using one random sample at a time (batch_size=1). This can
+    be faster than batch GD for large datasets and may help escape local minima.
 
-        Returns:
-            w: The last weight vector of the method
-            loss: the value of the loss (MSE) using the last weight vector
+    Args:
+        y: numpy array of shape=(N,). Target values.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        initial_w: numpy array of shape=(D,). Initial weights.
+        max_iters: int. Number of SGD iterations (updates).
+        gamma: float. Learning rate.
+
+    Returns:
+        tuple containing:
+            - w (np.ndarray): Final weight vector, shape (D,).
+            - loss (np.generic): Final MSE loss computed on full dataset (scalar).
+
+    Note:
+        Each iteration uses a randomly selected single sample. The final loss
+        is computed on the entire dataset for consistent comparison.
     """
     batch_size = 1
     w = initial_w
+    # Perform stochastic gradient descent iterations
     for _ in range(max_iters):
+        # Sample one random data point
         mini_y, mini_tx = next(batch_iter(y, tx, batch_size))
         gradient: np.ndarray = compute_gradient(mini_y, mini_tx, w)
         w = w - gamma * gradient
 
+    # Compute final loss on full dataset
     loss: np.generic = mean_squared_error(y, tx, w)
     return w, loss
 
 
 def least_squares(y: np.ndarray, tx: np.ndarray) -> tuple[np.ndarray, np.generic]:
-    """Calculate the least squares solution.
-           returns mse, and optimal weights.
+    """Compute optimal linear regression weights using the Normal Equation.
 
-        Args:
-            y: numpy array of shape (N,), N is the number of samples.
-            tx: numpy array of shape (N, D), D is the number of features.
+    Solves the closed-form solution: w = (X^T X)^(-1) X^T y
+    This provides the exact optimal solution for linear regression with MSE loss.
 
-        Returns:
-            w: optimal weights, numpy array of shape(D,), D is the number of features.
-            mse: scalar.
+    Args:
+        y: numpy array of shape (N,). Target values.
+        tx: numpy array of shape (N, D). Feature matrix.
+
+    Returns:
+        tuple containing:
+            - w (np.ndarray): Optimal weight vector, shape (D,).
+            - loss (np.generic): MSE loss with optimal weights (scalar).
+
+    Note:
+        This is an exact solution (no iterations needed) but requires inverting
+        a D×D matrix, which can be expensive for high-dimensional data.
+        The matrix X^T X must be invertible (full rank).
     """
     tx_t = tx.T
+    # Solve the normal equation: (X^T X) w = X^T y
     a = tx_t @ tx
     b = tx_t @ y
-    w: np.ndarray = np.linalg.solve(a, b)  # Solve the equation Aw = b
+    w: np.ndarray = np.linalg.solve(a, b)
+
+    # Compute MSE loss with optimal weights
     loss: np.generic = mean_squared_error(y, tx, w)
     return w, loss
 
 
 def ridge_regression(y: np.ndarray, tx: np.ndarray, lambda_: float) -> tuple[np.ndarray, np.generic]:
-    """implement ridge regression.
+    """Compute optimal ridge regression weights with L2 regularization.
 
-        Args:
-            y: numpy array of shape (N, ), N is the number of samples.
-            tx: numpy array of shape (N, D), D is the number of features.
-            lambda_: scalar.
+    Solves the regularized normal equation: w = (X^T X + λ'I)^(-1) X^T y
+    where λ' = 2λN and N is the number of samples.
 
-        Returns:
-            w: optimal weights, numpy array of shape(D,), D is the number of features.
-            loss: scalar MSE
-        """
+    Ridge regression adds L2 penalty to prevent overfitting and improve
+    numerical stability when X^T X is near-singular.
+
+    Args:
+        y: numpy array of shape (N,). Target values.
+        tx: numpy array of shape (N, D). Feature matrix.
+        lambda_: float. Regularization parameter (controls penalty strength).
+
+    Returns:
+        tuple containing:
+            - w (np.ndarray): Optimal regularized weight vector, shape (D,).
+            - loss (np.generic): MSE loss (without regularization term) (scalar).
+
+    Note:
+        - Larger lambda_ values produce smaller weights (more regularization)
+        - The returned loss is the unregularized MSE for fair comparison
+        - The regularization parameter is scaled by 2N internally
+    """
     n, d = tx.shape
+    # Scale regularization parameter by 2N
     lambda_prime = 2 * lambda_ * n
     tx_t = tx.T
+    # Solve regularized normal equation: (X^T X + λ'I) w = X^T y
     a = tx_t @ tx + lambda_prime * np.eye(d)
     b = tx_t @ y
-    w: np.ndarray = np.linalg.solve(a, b)  # Solve the equation Aw = b
+    w: np.ndarray = np.linalg.solve(a, b)
+
+    # Compute unregularized MSE loss for comparison
     loss: np.generic = mean_squared_error(y, tx, w)
     return w, loss
 
 
 def logistic_regression(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
-    """Logistic regression using gradient descent.
+    """Logistic regression for binary classification using gradient descent.
+
+    Optimizes the logistic loss (negative log-likelihood) using gradient descent.
+    Suitable for binary classification with labels in {-1, 1}.
 
     Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N, D)
-        initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
-        max_iters: a scalar denoting the total number of iterations of the method
-        gamma: a scalar denoting the stepsize
+        y: numpy array of shape=(N,). Binary labels in {-1, 1}.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        initial_w: numpy array of shape=(D,). Initial weights.
+        max_iters: int. Number of gradient descent iterations.
+        gamma: float. Learning rate.
+
     Returns:
-        w: The last weight vector of the method
-        loss: the value of the loss (logistic loss) using the last weight vector
+        tuple containing:
+            - w (np.ndarray): Final weight vector, shape (D,).
+            - loss (np.generic): Final logistic loss value (scalar).
+
+    Note:
+        The logistic loss is: L = mean(-y·(Xw) + log(1 + exp(Xw)))
+        This is the negative log-likelihood for binary classification.
     """
     w = initial_w
+    # Perform gradient descent iterations
     for _ in range(max_iters):
         gradient: np.ndarray = logistic_gradient(y, tx, w)
         w = w - gamma * gradient
 
+    # Compute final logistic loss
     loss: np.generic = logistic_loss(y, tx, w)
     return w, loss
 
+
 def logistic_regression_balanced(y: np.ndarray, tx: np.ndarray, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
-    """Logistic regression using gradient descent with balanced loss.
+    """Logistic regression with class-balanced loss for imbalanced datasets.
+
+    Similar to standard logistic regression but applies higher weight to the
+    minority class to handle class imbalance. The loss from minority class
+    samples is scaled up proportionally to the class ratio.
 
     Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N, D)
-        initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
-        max_iters: a scalar denoting the total number of iterations of the method
-        gamma: a scalar denoting the stepsize
+        y: numpy array of shape=(N,). Binary labels in {-1, 1}.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        initial_w: numpy array of shape=(D,). Initial weights.
+        max_iters: int. Number of iterations.
+        gamma: float. Learning rate.
+
     Returns:
-        w: The last weight vector of the method
-        loss: the value of the loss (logistic loss) using the last weight vector
+        tuple containing:
+            - w (np.ndarray): Final weight vector, shape (D,).
+            - loss (np.generic): Final balanced logistic loss (scalar).
+
+    Note:
+        The balancing factor is the ratio of negative to positive samples.
+        This helps the model pay more attention to the minority class.
     """
     w = initial_w
+    # Perform balanced gradient descent iterations
     for _ in range(max_iters):
         gradient: np.ndarray = logistic_gradient_balanced(y, tx, w)
         w = w - gamma * gradient
 
+    # Compute final balanced logistic loss
     loss: np.generic = logistic_loss_balanced(y, tx, w)
     return w, loss
 
+
 def reg_logistic_regression(y: np.ndarray, tx: np.ndarray, lambda_: float, initial_w: np.ndarray, max_iters: int, gamma: float) -> tuple[np.ndarray, np.generic]:
-    """Regularized logistic regression using gradient descent.
+    """Regularized logistic regression with L2 penalty.
+
+    Adds L2 regularization to logistic regression to prevent overfitting.
+    The regularization term penalizes large weight values.
 
     Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N, D)
-        lambda_: scalar, regularization parameter
-        initial_w: numpy array of shape=(D, ). The initial guess (or the initialization) for the model parameters
-        max_iters: a scalar denoting the total number of iterations of the method
-        gamma: a scalar denoting the stepsize
+        y: numpy array of shape=(N,). Binary labels in {-1, 1}.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        lambda_: float. Regularization parameter (penalty strength).
+        initial_w: numpy array of shape=(D,). Initial weights.
+        max_iters: int. Number of iterations.
+        gamma: float. Learning rate.
 
     Returns:
-        w: The last weight vector of the method
-        loss: the value of the loss (regularized logistic loss) using the last weight vector
+        tuple containing:
+            - w (np.ndarray): Final weight vector, shape (D,).
+            - loss (np.generic): Final logistic loss without regularization term (scalar).
+
+    Note:
+        - The gradient includes regularization: ∇L + 2λw
+        - Larger lambda_ values produce smaller weights (more regularization)
+        - The returned loss excludes the regularization term for fair comparison
     """
     w = initial_w
+    # Perform regularized gradient descent
     for _ in range(max_iters):
+        # Add L2 regularization term to gradient
         gradient: np.ndarray = logistic_gradient(y, tx, w) + 2 * lambda_ * w
         w = w - gamma * gradient
+
+    # Compute unregularized logistic loss
     loss: np.generic = logistic_loss(y, tx, w)
     return w, loss
 
-########################################################################################3
-# Auxiliar Functions
-########################################################################################3
+
+################################################################################
+# Loss Functions
+################################################################################
+
 
 def mean_squared_error(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.generic:
-    """Calculate the loss using MSE
+    """Calculate the Mean Squared Error (MSE) loss.
+
+    Computes: MSE = (1/2N) Σ(y_i - x_i^T w)^2
 
     Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N, D)
-        w: numpy array of shape=(D, ). The vector of model parameters.
+        y: numpy array of shape=(N,). Target values.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        w: numpy array of shape=(D,). Weight vector.
 
     Returns:
-        the value of the loss (a scalar), corresponding to the input parameters w.
+        Scalar MSE loss value.
+
+    Note:
+        The factor of 1/2 simplifies the gradient computation.
     """
-    n: int  = y.shape[0]
+    n: int = y.shape[0]
+    # Compute prediction errors
     error: np.ndarray = y - tx @ w
-    loss: np.generic = 1 / (2 * n) * error.T @ error # type: ignore
+    # Compute MSE: (1/2N) ||error||^2
+    loss: np.generic = 1 / (2 * n) * error.T @ error  # type: ignore
     return loss
+
 
 def mean_squared_balanced_error(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.generic:
-    """Calculate the loss using MSE
+    """Calculate class-balanced Mean Squared Error loss.
+
+    Similar to standard MSE but applies higher weight to errors from the
+    minority class. The correction factor is the ratio of class frequencies.
 
     Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N, D)
-        w: numpy array of shape=(D, ). The vector of model parameters.
+        y: numpy array of shape=(N,). Target values in {-1, 1}.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        w: numpy array of shape=(D,). Weight vector.
 
     Returns:
-        the value of the loss (a scalar), corresponding to the input parameters w.
+        Scalar balanced MSE loss value.
+
+    Note:
+        Errors from the minority class are weighted by the class ratio,
+        giving them more importance in the overall loss.
     """
-    n: int  = y.shape[0]
+    n: int = y.shape[0]
+    # Compute class-weighted errors
     error: np.ndarray = compute_balanced_errors(y, tx, w)
-    loss: np.generic = 1 / (2 * n) * error.T @ error # type: ignore
+    # Compute balanced MSE
+    loss: np.generic = 1 / (2 * n) * error.T @ error  # type: ignore
     return loss
 
+
+################################################################################
+# Gradient Functions
+################################################################################
+
+
 def compute_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray:
-    """Computes the gradient at w of the Mean Squared Error loss function.
+    """Compute the gradient of the Mean Squared Error loss function.
+
+    The gradient is: ∇L = -(1/N) X^T (y - Xw)
 
     Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N, D)
-        w: numpy array of shape=(D, ). The vector of model parameters.
+        y: numpy array of shape=(N,). Target values.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        w: numpy array of shape=(D,). Current weight vector.
 
     Returns:
-        An numpy array of shape (D, ) (same shape as w), containing the gradient of the loss at w.
+        Gradient vector of shape (D,), same shape as w.
+
+    Note:
+        The negative sign indicates the direction of steepest descent.
     """
     n = y.shape[0]
+    # Compute prediction errors
     errors: np.ndarray = y - tx @ w
+    # Compute gradient: -(1/N) X^T error
     gradient: np.ndarray = -1 / n * tx.T @ errors
     return gradient
+
 
 def compute_balanced_gradient(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray:
-    """Computes the gradient at w of the Mean Squared Error loss function.
+    """Compute the gradient of the class-balanced MSE loss function.
+
+    Similar to standard gradient but uses balanced errors that weight
+    the minority class more heavily.
 
     Args:
-        y: numpy array of shape=(N, )
-        tx: numpy array of shape=(N, D)
-        w: numpy array of shape=(D, ). The vector of model parameters.
+        y: numpy array of shape=(N,). Target values in {-1, 1}.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        w: numpy array of shape=(D,). Current weight vector.
 
     Returns:
-        An numpy array of shape (D, ) (same shape as w), containing the gradient of the loss at w.
+        Balanced gradient vector of shape (D,), same shape as w.
+
+    Note:
+        The balancing helps gradient descent pay more attention to
+        correctly classifying the minority class.
     """
     n = y.shape[0]
-    
+    # Compute class-weighted errors
     errors: np.ndarray = compute_balanced_errors(y, tx, w)
+    # Compute balanced gradient
     gradient: np.ndarray = -1 / n * tx.T @ errors
     return gradient
 
+
 def compute_balanced_errors(y: np.ndarray, tx: np.ndarray, w: np.ndarray) -> np.ndarray:
-    """Calculate the weighted error, it penalizes more false negatives in order to account for class imbalance.
+    """Calculate weighted prediction errors to handle class imbalance.
+
+    Computes standard errors (y - Xw) but scales them based on class frequency.
+    Errors from the minority class are weighted more heavily to ensure they
+    contribute proportionally to the loss despite having fewer samples.
 
     Args:
-        y: shape=(N, )
-        tx: shape=(N,D)
-        w: shape=(D,). The vector of model parameters.
+        y: numpy array of shape=(N,). Target values in {-1, 1}.
+        tx: numpy array of shape=(N, D). Feature matrix.
+        w: numpy array of shape=(D,). Weight vector.
 
     Returns:
-        the vector of errors (shape=(N, )), corresponding to the input parameters w.
+        Weighted error vector of shape (N,).
+
+    Note:
+        The correction factor is the ratio of negative to positive samples.
+        - If negatives are majority (factor > 1): positive errors are scaled up
+        - If positives are majority (factor < 1): negative errors are scaled up
     """
+    # Compute prediction errors
     error = y - (tx @ w)
+    # Calculate class imbalance ratio
     correction_factor = negative_positive_ratio(y)
     
-    if correction_factor > 1:  # This will be the case in our dataset, the other case is included to make the function more general
+    # Apply higher weight to minority class errors
+    if correction_factor > 1:
+        # More negatives than positives: weight positive errors more
         error[error >= 0] *= correction_factor
     else:
+        # More positives than negatives: weight negative errors more
         error[error <= 0] *= correction_factor
     return error
+
+
+################################################################################
+# Utility Functions
+################################################################################
 
 def batch_iter(y: np.ndarray, tx: np.ndarray, batch_size: int, num_batches: int = 1, shuffle: bool = True) -> Generator[tuple[np.ndarray, np.ndarray], None, None]:
     """

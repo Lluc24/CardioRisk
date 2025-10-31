@@ -28,7 +28,7 @@ class Dataset:
         x_test: numpy array of shape (M, D) or None. Test feature matrix (labels unknown).
     """
 
-    def __init__(self, x_train: np.ndarray, y_train: np.ndarray, num_cont_features: int):
+    def __init__(self, x_train: np.ndarray, y_train: np.ndarray, num_cont_features: int, seed = 1) -> None:
         """Initializes the Dataset with training and optional test data.
 
         Args:
@@ -44,6 +44,7 @@ class Dataset:
         self.x_test = x_te
         self.y_test = y_te
         self.num_cont_features = num_cont_features
+        self.seed = seed
 
     def __len__(self):
         """Returns the number of training samples in the dataset.
@@ -78,6 +79,7 @@ class Dataset:
         fold_size: int = int(len(self) / k)
 
         # Randomly shuffle all indices once
+        np.random.seed(self.seed)
         indices = np.random.permutation(len(self))
 
         for i in range(k):
@@ -139,7 +141,7 @@ class Dataset:
                 - mean: numpy generic. Mean of training features
                 - std: numpy generic. Standard deviation of training features
         """
-        x_train, y_train, x_val, y_val = self._split_data_arrays(self.x_train, self.y_train, ratio)
+        x_train, y_train, x_val, y_val = self._split_data_arrays(self.x_train, self.y_train, ratio, seed = self.seed)
 
         mean: np.generic = np.mean(x_train[:, 1:self.num_cont_features+1], axis=0)
         std: np.generic = np.std(x_train[:, 1:self.num_cont_features+1], axis=0)
@@ -160,7 +162,7 @@ class Dataset:
         return self.x_test, self.y_test
     
     @staticmethod
-    def _split_data_arrays(x_data, y_data, ratio: float = 0.8) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    def _split_data_arrays(x_data, y_data, ratio: float = 0.8, seed: int = 1) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Randomly splits the training data into train and validation sets.
 
         Shuffles the entire training dataset and divides it into two subsets
@@ -183,6 +185,7 @@ class Dataset:
         split_index = int(N * ratio)
 
         # Randomly shuffle all indices
+        np.random.seed(seed)
         indices = np.random.permutation(N)
 
         # Split indices according to ratio

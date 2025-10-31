@@ -1,31 +1,49 @@
-"""Some helper functions for project 1."""
+"""
+Helper functions for machine learning project workflows.
+
+This module provides utility functions for:
+- Loading data from CSV files
+- Creating submission files with unique timestamps
+- Data subsetting for faster experimentation
+
+All functions handle file I/O and data formatting for the ML pipeline.
+"""
 
 import csv
 import numpy as np
 import os
 import pathlib
 import datetime
-import logging
-
-logger = logging.getLogger(__name__)
 
 
-def load_csv_data(data_path, sub_sample=False):
-    """
-    This function loads the data and returns the respectinve numpy arrays.
-    Remember to put the 3 files in the same folder and to not change the names of the files.
+def load_csv_data(data_path: str, sub_sample: bool = False) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Load training and test data from CSV files in the specified directory.
+
+    Reads three CSV files (x_train.csv, x_test.csv, y_train.csv) from the given
+    directory path and returns them as numpy arrays. The first column in each
+    file is assumed to be the sample ID.
 
     Args:
-        data_path (str): datafolder path
-        sub_sample (bool, optional): If True the data will be subsempled. Default to False.
+        data_path (str): Path to the directory containing the CSV files.
+                        Must contain 'x_train.csv', 'x_test.csv', and 'y_train.csv'.
+        sub_sample (bool, optional): If True, subsamples the training data by
+                                     selecting every 50th sample. Useful for
+                                     faster experimentation. Default is False.
 
     Returns:
-        x_train (np.array): training data
-        x_test (np.array): test data
-        y_train (np.array): labels for training data in format (-1,1)
-        train_ids (np.array): ids of training data
-        test_ids (np.array): ids of test data
+        tuple containing:
+            - x_train (np.ndarray): Training features, shape (N_train, D) where
+                                   N_train is number of samples, D is features.
+            - x_test (np.ndarray): Test features, shape (N_test, D).
+            - y_train (np.ndarray): Training labels in {-1, 1}, shape (N_train,).
+            - train_ids (np.ndarray): Training sample IDs, shape (N_train,).
+            - test_ids (np.ndarray): Test sample IDs, shape (N_test,).
+
+    Note:
+        The IDs (first column) are automatically extracted and returned separately
+        from the feature matrices.
     """
+    # Load training labels from CSV (only second column contains labels)
     y_train = np.genfromtxt(
         os.path.join(data_path, "y_train.csv"),
         delimiter=",",
@@ -33,19 +51,23 @@ def load_csv_data(data_path, sub_sample=False):
         dtype=int,
         usecols=1,
     )
+    # Load training features from CSV
     x_train = np.genfromtxt(
         os.path.join(data_path, "x_train.csv"), delimiter=",", skip_header=1
     )
+    # Load test features from CSV
     x_test = np.genfromtxt(
         os.path.join(data_path, "x_test.csv"), delimiter=",", skip_header=1
     )
 
+    # Extract IDs (first column) and convert to integers
     train_ids = x_train[:, 0].astype(dtype=int)
     test_ids = x_test[:, 0].astype(dtype=int)
+    # Remove ID column from feature matrices
     x_train = x_train[:, 1:]
     x_test = x_test[:, 1:]
 
-    # sub-sample
+    # Subsample data if requested (take every 50th sample for faster experiments)
     if sub_sample:
         y_train = y_train[::50]
         x_train = x_train[::50]
@@ -55,35 +77,89 @@ def load_csv_data(data_path, sub_sample=False):
 
 
 def unique_name(func):
+    """Decorator that generates unique timestamped filenames for submission files.
+
+    This decorator wraps functions that create submission files, automatically
+    generating a unique filename with a timestamp to prevent overwriting previous
+    submissions. Files are saved in a 'submissions/' directory.
+
+    Args:
+        func: Function to decorate. Should accept 'name' as a keyword argument
+              for the output filename.
+
+    Returns:
+        Wrapper function that generates timestamped filenames.
+
+    Example:
+        @unique_name
+        def create_submission(ids, predictions, *, name):
+            # Save to file with name
+            pass
+
+        # Calling create_submission() will auto-generate:
+        # submissions/submission_20231031_143022.csv
+        create_submission(ids, preds)
+
+        # Or with a prefix:
+        create_submission(ids, preds, prefix="logistic")
+        # Creates: submissions/logistic_submission_20231031_143022.csv
+    """
+    # Create submissions directory if it doesn't exist
     dir = pathlib.Path("submissions")
     dir.mkdir(exist_ok=True)
 
     def wrapper(*args, **kwargs):
+        # Extract optional prefix from kwargs
         prefix = kwargs.pop("prefix", "")
         prefix = prefix + "_" if prefix else ""
+        # Generate timestamp string
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        # Create unique filename
         name = str(dir / f"{prefix}submission_{timestamp}.csv")
+        # Call original function with generated name
         return func(*args, name=name, **kwargs)
 
     return wrapper
 
 
 @unique_name
-def create_csv_submission(ids, y_pred, *, name):
-    """
-    This function creates a csv file named 'name' in the format required for a submission in Kaggle or AIcrowd.
-    The file will contain two columns the first with 'ids' and the second with 'y_pred'.
-    y_pred must be a list or np.array of 1 and -1 otherwise the function will raise a ValueError.
+def create_csv_submission(ids: np.ndarray, y_pred: np.ndarray, *, name: str) -> None:
+    """Create a CSV submission file with predictions in competition format.
+
+    Generates a CSV file with two columns (Id, Prediction) suitable for
+    submission to Kaggle or AIcrowd competitions. The filename is automatically
+    generated with a timestamp via the @unique_name decorator.
 
     Args:
-        ids (list,np.array): indices
-        y_pred (list,np.array): predictions on data correspondent to indices
-        name (str): name of the file to be created
+        ids (np.ndarray): Array of sample IDs, shape (N,).
+        y_pred (np.ndarray): Array of predictions in {-1, 1}, shape (N,).
+        name (str): Output filename (automatically generated by decorator).
+
+    Raises:
+        ValueError: If y_pred contains values other than -1 or 1.
+
+    Side Effects:
+        Creates a CSV file in the 'submissions/' directory.
+
+    Example:
+        # Automatically creates: submissions/submission_20231031_143530.csv
+        create_csv_submission(test_ids, predictions)
+
+        # With prefix: submissions/best_submission_20231031_143530.csv
+        create_csv_submission(test_ids, predictions, prefix="best")
+
+    CSV Format:
+        Id,Prediction
+        1,-1
+        2,1
+        3,1
+        ...
     """
-    # Check that y_pred only contains -1 and 1
+    # Validate predictions are binary (-1 or 1)
     if not all(i in [-1, 1] for i in y_pred):
         raise ValueError("y_pred can only contain values -1, 1")
 
+    # Write predictions to CSV file
     with open(name, "w", newline="") as csvfile:
         fieldnames = ["Id", "Prediction"]
         writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
