@@ -10,15 +10,15 @@ MAX_ITERS = 300
 GAMMAS = []
 
 def run_exp():
-    print("Running Experiment lambda_LogR")
+    print("Running Experiment Gamma_LogR")
     data = Data()
     data.load_from_csv("dataset", "metadata.json")
     data.add_intercept()
     dataset = Dataset(data.x_train, data.y_train, data.num_cont_features)
 
-    with open(f"lambda_LogR.csv", "w") as csvfile:
+    with open(f"gamma_LogR.csv", "w") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["Lambda", "F1 Score", "Accuracy", "Threshold"])
+        writer.writerow(["Gamma", "F1 Score", "Accuracy", "Threshold"])
 
         for gamma in GAMMAS:
             model = LogisticRegressionGD(max_iters=MAX_ITERS, gamma=gamma)
