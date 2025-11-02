@@ -1,8 +1,24 @@
 # Coronary Heart Disease Risk Prediction
 
-**CS-433 Machine Learning - Project 1**
+> **Course Project:** CS-433 Machine Learning - Project 1 (Fall 2024)  
+> **Institution:** École Polytechnique Fédérale de Lausanne (EPFL)  
+> **Grade Obtained:** X/6 (10% of final course grade)  
+> **Authors:** [Lluc Santamaria Riba](https://github.com/Lluc24), [Francisco Badia Laguillo](https://github.com/siscubl04), [Aleksandra Zawadzka](https://github.com/piefek1)
 
-**Authors:** Francisco Badia Laguillo, Lluc Santamaria Riba, Aleksandra Zawadzka
+---
+
+## About This Project
+
+This repository contains our complete submission for the first project of the CS-433 Machine Learning course at EPFL. The project focused on developing a machine learning model to predict coronary heart disease risk using real-world health surveillance data.
+
+**Project Resources:**
+- 📋 [Official Project Assignment](https://github.com/epfml/ML_course/tree/52574e9dc11bea89d3d322a8b565127108130e77/projects/project1)
+- 📄 [Report.pdf](Report.pdf) - Our detailed technical report submitted for grading
+- 📄 [project1_description.pdf](project1_description.pdf) - Official project description and requirements
+- 📖 [codebook.pdf](codebook.pdf) - Complete dataset documentation and feature descriptions
+- 💾 [dataset/](dataset/) - Original training and test data files
+
+This project was submitted in 31 October 2025 and represented 10% of our final grade in the course. We are now making it publicly available to showcase our work and contribute to the machine learning community. The following part is the original Readme.md used in the submission.
 
 ---
 
@@ -17,6 +33,8 @@ This project develops a machine learning model to predict the risk of coronary h
 
 ## Table of Contents
 
+- [About This Project](#about-this-project)
+- [Overview](#overview)
 - [Dataset](#dataset)
 - [Project Structure](#project-structure)
 - [Installation](#installation)
@@ -25,6 +43,7 @@ This project develops a machine learning model to predict the risk of coronary h
 - [Results](#results)
 - [Key Findings](#key-findings)
 - [Requirements](#requirements)
+- [Project Files](#project-files)
 
 ## Dataset
 
@@ -302,6 +321,35 @@ For real-world patient diagnosis, minimizing missed diagnoses is critical as it 
 
 - Python 3.13+
 - NumPy
+
+## Project Files
+
+This repository includes all materials from our original submission:
+
+### Documentation
+- **Report.pdf** - Our complete technical report (submitted for grading)
+- **ML_project_1.pdf** - Official project requirements and specifications
+- **codebook.pdf** - Comprehensive dataset documentation with feature descriptions
+- **README.md** - This file (project overview and usage guide)
+
+### Dataset
+The `dataset/` directory contains:
+- `x_train.csv` - Training features (328,135 samples × 321 features)
+- `y_train.csv` - Training labels
+- `x_test.csv` - Test features
+- `sample_submission.csv` - Submission format template
+
+**Note:** Dataset files can also be downloaded from the [official project page](https://github.com/epfml/ML_course/blob/main/projects/project1/data/dataset.zip).
+
+### Code Structure
+- **run.py** - Main execution script
+- **implementations.py** - Core ML algorithms (per project specification)
+- **models.py** - Model implementations
+- **methods.py** - Training utilities
+- **dataset.py** - Data handling
+- **data_cleaning.py** - Preprocessing pipeline
+- **helpers.py** - Utility functions
+- **dataset_metadata.json** - Feature metadata
 
 ## License
 
