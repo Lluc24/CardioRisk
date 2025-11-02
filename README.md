@@ -1,6 +1,6 @@
 # Coronary Heart Disease Risk Prediction
 
-> **Course Project:** CS-433 Machine Learning - Project 1 (Fall 2024)  
+> **Course Project:** CS-433 Machine Learning - Project 1 (Fall 2025)  
 > **Institution:** École Polytechnique Fédérale de Lausanne (EPFL)  
 > **Grade Obtained:** X/6 (10% of final course grade)  
 > **Authors:** [Lluc Santamaria Riba](https://github.com/Lluc24), [Francisco Badia Laguillo](https://github.com/siscubl04), [Aleksandra Zawadzka](https://github.com/piefek1)
