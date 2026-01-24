@@ -2,7 +2,7 @@
 
 > **Course Project:** CS-433 Machine Learning - Project 1 (Fall 2025)  
 > **Institution:** École Polytechnique Fédérale de Lausanne (EPFL)  
-> **Grade Obtained:** X/6 (10% of final course grade)  
+> **Grade Obtained:** 8.5/10 (10% of final course grade)  
 > **Authors:** [Lluc Santamaria Riba](https://github.com/Lluc24), [Francisco Badia Laguillo](https://github.com/siscubl04), [Aleksandra Zawadzka](https://github.com/piefek1)
 
 ---
@@ -18,9 +18,54 @@ This repository contains our complete submission for the first project of the CS
 - 📖 [codebook.pdf](codebook.pdf) - Complete dataset documentation and feature descriptions
 - 💾 [dataset/](dataset/) - Original training and test data files
 
-This project was submitted in 31 October 2025 and represented 10% of our final grade in the course. We are now making it publicly available to showcase our work and contribute to the machine learning community. The following part is the original Readme.md used in the submission.
+This project was submitted in 31 October 2025 and represented 10% of our final grade in the course. We are now making it publicly available to showcase our work and contribute to the machine learning community.
+
+## Reviews
+
+This project received two independent reviews from course staff. Below are the complete reviews:
+
+### ⭐ Review 1
+
+**Baselines and Ablation Studies (48/50)**
+- **Justification (10/10):** Strong motivation. Excellent discussion of data leakage issues (feature selection, standardization) and how they were corrected. Clear reasoning for class imbalance solutions.
+- **Comparison (20/20):** Good.
+- **Cross-validation (10/10):** Properly implemented 5-fold CV throughout. Well-documented.
+- **Hyperparameter optimization (8/10):** Figure 2 shows learning rate ablation. Fold-specific threshold optimization described. Could be more comprehensive.
+
+**Additional Contributions (20/20)**
+- **Contribution (5/5):** Loss balancing for class imbalance; Fold-specific threshold optimization; Feature expansion analysis; Data leakage correction
+- **Motivation (5/5):** Clear justification for each approach.
+- **Assessment (10/10):** Good ablation studies.
+
+**Reproducibility (8/10)**
+- Footnote admits run.py produces different results than best submission
+- Best hyperparameters only partially specified
+
+**Scientific Evidence (10/10)**
+
+**Writing Quality (10/10)**
+
+**Scores:**
+- Report Score: 9 (90%)
+- Code Score: A (Outstanding, Extra bonus)
+
+**Code Feedback:**
+- The code passes all tests.
+- Documentation is good.
+- Code readability is good.
+
+### ⭐ Review 2
+
+**Report Feedback:**
+This is a great and well-structured report that demonstrates a solid understanding of preprocessing, model selection, and evaluation. However, only logistic regression is tested and the performance is relatively low.
+
+**Scores:**
+- Report Score: 8 (80%)
+- Code Score: B (Full score)
 
 ---
+
+⚠️ The following part is the original Readme.md used in the submission.
 
 ## Overview
 
