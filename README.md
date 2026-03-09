@@ -9,7 +9,7 @@
 
 ## About This Project
 
-This repository contains our complete submission for the first project of the CS-433 Machine Learning course at EPFL. The project focused on developing a machine learning model to predict coronary heart disease risk using real-world health surveillance data.
+This repository contains our complete submission for the first project of the CS-433 Machine Learning course at EPFL. The project focused on developing a machine learning model to predict coronary heart disease risk using real-world health surveillance data by the CDC.
 
 **Project Resources:**
 - 📋 [Official Project Assignment](https://github.com/epfml/ML_course/tree/52574e9dc11bea89d3d322a8b565127108130e77/projects/project1)
