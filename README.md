@@ -1,224 +1,165 @@
-# Coronary Heart Disease Risk Prediction
+# CardioRisk — Heart Disease Risk Prediction from First Principles
 
-> **Course Project:** CS-433 Machine Learning - Project 1 (Fall 2025)  
-> **Institution:** École Polytechnique Fédérale de Lausanne (EPFL)  
-> **Grade Obtained:** 8.5/10 (10% of final course grade)  
-> **Authors:** [Lluc Santamaria Riba](https://github.com/Lluc24), [Francisco Badia Laguillo](https://github.com/siscubl04), [Aleksandra Zawadzka](https://github.com/piefek1)
+Binary classification of coronary heart disease (CHD) risk from 328K CDC health surveillance records.  
+All ML algorithms implemented from scratch in NumPy — no scikit-learn, no ML frameworks.
 
----
-
-## About This Project
-
-This repository contains our complete submission for the first project of the CS-433 Machine Learning course at EPFL. The project focused on developing a machine learning model to predict coronary heart disease risk using real-world health surveillance data by the CDC.
-
-**Project Resources:**
-- 📋 [Official Project Assignment](https://github.com/epfml/ML_course/tree/52574e9dc11bea89d3d322a8b565127108130e77/projects/project1)
-- 📄 [Report.pdf](Report.pdf) - Our detailed technical report submitted for grading
-- 📄 [project1_description.pdf](project1_description.pdf) - Official project description and requirements
-- 📖 [codebook.pdf](codebook.pdf) - Complete dataset documentation and feature descriptions
-- 💾 [dataset/](dataset/) - Original training and test data files
-
-This project was submitted in 31 October 2025 and represented 10% of our final grade in the course. We are now making it publicly available to showcase our work and contribute to the machine learning community.
-
-## Reviews
-
-This project received two independent reviews from course staff. Below are the complete reviews:
-
-### ⭐ Review 1
-
-**Baselines and Ablation Studies (48/50)**
-- **Justification (10/10):** Strong motivation. Excellent discussion of data leakage issues (feature selection, standardization) and how they were corrected. Clear reasoning for class imbalance solutions.
-- **Comparison (20/20):** Good.
-- **Cross-validation (10/10):** Properly implemented 5-fold CV throughout. Well-documented.
-- **Hyperparameter optimization (8/10):** Figure 2 shows learning rate ablation. Fold-specific threshold optimization described. Could be more comprehensive.
-
-**Additional Contributions (20/20)**
-- **Contribution (5/5):** Loss balancing for class imbalance; Fold-specific threshold optimization; Feature expansion analysis; Data leakage correction
-- **Motivation (5/5):** Clear justification for each approach.
-- **Assessment (10/10):** Good ablation studies.
-
-**Reproducibility (8/10)**
-- Footnote admits run.py produces different results than best submission
-- Best hyperparameters only partially specified
-
-**Scientific Evidence (10/10)**
-
-**Writing Quality (10/10)**
-
-**Scores:**
-- Report Score: 9 (90%)
-- Code Score: A (Outstanding, Extra bonus)
-
-**Code Feedback:**
-- The code passes all tests.
-- Documentation is good.
-- Code readability is good.
-
-### ⭐ Review 2
-
-**Report Feedback:**
-This is a great and well-structured report that demonstrates a solid understanding of preprocessing, model selection, and evaluation. However, only logistic regression is tested and the performance is relatively low.
-
-**Scores:**
-- Report Score: 8 (80%)
-- Code Score: B (Full score)
+**Results:** 0.868 accuracy · 0.424 F1-score · Logistic Regression with fold-averaged threshold optimization  
+**Code quality:** Outstanding (extra bonus) · Report: 90%
 
 ---
 
-⚠️ The following part is the original Readme.md used in the submission.
+## What This Project Does
 
-## Overview
+Given a patient's behavioral health survey responses (lifestyle, chronic conditions, demographics), the model predicts whether they have been diagnosed with coronary heart disease.
 
-This project develops a machine learning model to predict the risk of coronary heart disease (MICHD) using data from the U.S. Centers for Disease Control's Behavioral Risk Factor Surveillance System (BRFSS). The model enables risk assessment based on individual behaviors and health status.
+The real challenge: **real-world data at scale** — 321 raw features, 45% missing values, severe class imbalance (10% positive), and no ML libraries allowed.
 
-**Final Model Performance:**
-- **Accuracy:** 0.868
-- **F1-Score:** 0.424
-- **Model:** Logistic Regression with threshold adjustment
+**Dataset:** [CDC Behavioral Risk Factor Surveillance System (BRFSS)](https://github.com/epfml/ML_course/blob/main/projects/project1/data/dataset.zip) — 328,135 samples, 321 features
 
-## Table of Contents
+---
 
-- [About This Project](#about-this-project)
-- [Overview](#overview)
-- [Dataset](#dataset)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Methodology](#methodology)
-- [Results](#results)
-- [Key Findings](#key-findings)
-- [Requirements](#requirements)
-- [Project Files](#project-files)
+## Technical Highlights
 
-## Dataset
+### Algorithms Implemented from Scratch
 
-The BRFSS dataset contains:
-- **328,135 samples** across **321 features**
-- **Target variable:** MICHD diagnosis (y=1 for diagnosed, y=-1 for not diagnosed)
-- **Severe class imbalance:** Only 10% positive samples
-- **45% missing values** across all entries
-- **182 features** with >10% NaN ratio
-- **95 categorical features** (≤10 unique values)
-- **44 continuous features**
-- **64 calculated variables** (prefixed with underscore)
+All of the following are pure NumPy implementations (`implementations.py`):
 
-**Data files** (place in `dataset/` directory):
-- `x_train.csv` - Training features
-- `y_train.csv` - Training labels
-- `x_test.csv` - Test features
-- `sample_submission.csv` - Submission format template
+| Algorithm | Variant |
+|-----------|---------|
+| Linear Regression | Gradient Descent, SGD, Normal Equation |
+| Ridge Regression | Closed-form with L2 regularization |
+| Logistic Regression | Gradient Descent |
+| Regularized Logistic Regression | GD with L2 penalty |
+| All of the above | Class-balanced loss variants |
+
+### Preprocessing Pipeline (`data_cleaning.py`)
+
+A metadata-driven pipeline configurable via `metadata.json`:
+
+- **Feature filtering:** Drops the 182/321 features with >10% missing values; retains 139
+- **Per-feature type handling** (controlled by JSON metadata):
+  - `continuous` — NaN → column mean; z-score standardized later
+  - `categorical` — one-hot encoded; NaN treated as a separate category
+  - `auto` — auto-detects type by counting unique values (≤10 → categorical)
+  - `delete` — removed features (redundant or leaking)
+- **Domain-knowledge curation:** 71 features manually classified and mapped using the [CDC codebook](codebook.pdf)
+- **Zero-variance removal:** Drops homogeneous columns after encoding
+- **Value range mappings:** Arbitrary `[key, value]` mappings including range expressions (`"50-100"`)
+
+### Cross-Validation with Leak-Free Standardization (`dataset.py`, `methods.py`)
+
+- 5-fold CV: standardization (μ, σ) computed **exclusively on the training fold**, applied to both train and validation — explicitly preventing data leakage
+- Per-fold **threshold optimization**: grid search over 100 thresholds in [-1, 1] to maximize F1-score on the validation fold
+- **Weight and threshold averaging** across folds for the final model — ensemble without extra inference cost
+
+### Class Imbalance Strategies (90:10 ratio)
+
+Three approaches benchmarked against all model variants:
+
+1. **Loss balancing** — minority class errors weighted by N_neg/N_pos ratio
+2. **Threshold adjustment** — decision boundary shifted to maximize F1
+3. **Combined** — both applied simultaneously
+
+### Ablation Study
+
+Full comparison across 8 configurations (Table 1 in [Report.pdf](Report.pdf)):
+
+| Model | Treatment | F1 | Accuracy |
+|-------|-----------|-----|----------|
+| Linear Regression | None | 0.000 | 0.910 |
+| Linear Regression | Loss Balancing | 0.347 | 0.737 |
+| Linear Regression | Threshold Adjustment | 0.402 | 0.858 |
+| Linear Regression | Both | 0.410 | 0.880 |
+| Logistic Regression | None | 0.420 | 0.892 |
+| Logistic Regression | Loss Balancing | 0.395 | 0.894 |
+| **Logistic Regression** | **Threshold Adjustment** | **0.424** | **0.868** |
+| Logistic Regression | Both | 0.412 | 0.859 |
+
+Key insight: logistic regression is inherently more robust to class imbalance than linear regression — loss balancing doesn't help it, but threshold adjustment does.
+
+### Feature Expansion Analysis
+
+Polynomial expansion up to degree 7 tested on training/validation loss and F1. No improvement found — the feature-label relationship is primarily linear for this dataset (Figure 1 in report).
+
+---
 
 ## Project Structure
 
 ```
-project-1-ai_force/
-├── run.py                      # Main script - loads data and generates predictions
-├── implementations.py          # Core ML algorithms (required by project spec)
-├── models.py                   # Model classes (LinearRegression, LogisticRegression)
-├── methods.py                  # Training methods (Cross Validation, Threshold Search)
-├── dataset.py                  # Dataset class with data-splitting utilities
-├── data_cleaning.py            # Data preprocessing pipeline
-├── helpers.py                  # Utility functions
-├── dataset_metadata.json       # Feature metadata (types, mappings, vocabularies)
-├── dataset/                    # Data directory (CSV files)
-├── submissions/                # Generated predictions
-└── README.md                   # This file
+├── run.py                  # End-to-end pipeline: load → train → predict → submit
+├── implementations.py      # Core ML algorithms (GD, SGD, least squares, ridge, logistic, balanced variants)
+├── models.py               # OOP wrappers: ModelBase ABC + LeastSquares, MSEGradientDescent, RidgeRegression,
+│                           #               LogisticRegressionGD, RegularizedLogisticRegressionGD
+├── methods.py              # cross_validate(), search_threshold()
+├── dataset.py              # Dataset class: k_fold_generator(), split_data(), standardization
+├── data_cleaning.py        # Data class: full preprocessing pipeline, one-hot encoding, NaN handling
+├── helpers.py              # CSV loading and submission utilities
+├── metadata.json           # Per-feature configuration (type, vocabulary, value mappings)
+├── experiments/            # Experiment scripts for ablation study and sensitivity analysis
+│   ├── exp_feature_expansion/  # Polynomial degree vs. loss/F1 (Figure 1)
+│   ├── exp_gamma_LogR/         # Learning rate sensitivity (Figure 2)
+│   └── individual_values/      # Per-configuration benchmarks (Table 1)
+└── dataset/                # CSV data files (see installation)
 ```
 
-## Installation
+---
 
-### Prerequisites
-- Python 3.13+
-- pip
+## Installation and Usage
 
-### Setup
+**Requirements:** Python 3.13+, NumPy
 
-1. Clone the repository:
 ```bash
 git clone https://github.com/CS-433/project-1-ai_force/
 cd project-1-ai_force
-```
-
-2. Create and activate virtual environment:
-```bash
-python -m venv env
-source env/bin/activate  # On Windows: env\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
+python -m venv env && source env/bin/activate
 pip install numpy
 ```
 
-4. Place [dataset files](https://github.com/epfml/ML_course/blob/main/projects/project1/data/dataset.zip) in the `dataset/` directory.
+Place [dataset files](https://github.com/epfml/ML_course/blob/main/projects/project1/data/dataset.zip) in `dataset/`.
 
-## Usage
-
-### Generate Predictions
-
-Run the main script to load the dataset, train the best model, and generate predictions:
+### Run the full pipeline
 
 ```bash
 python run.py
 ```
 
-This will:
-1. Load and preprocess the data using `dataset_metadata.json`
-2. Train the optimized logistic regression model
-3. Generate predictions on the test set
-4. Save results to `submissions/submission_<timestamp>.csv`
+Loads and cleans the data, runs 5-fold CV with threshold search, averages weights and thresholds across folds, and writes predictions to `submissions/submission_<timestamp>.csv`.
 
-**Note:** Training takes approximately 40 minutes as it loads the huge dataset, trains the model and adjust hyperparameters (threshold).
+> Training takes ~40 minutes due to dataset size and cross-validation.
 
-### Preprocessing Data
-
-The data cleaning pipeline can be used independently:
+### Use the preprocessing pipeline independently
 
 ```python
 from data_cleaning import Data
 
-# Load and clean data
 data = Data()
-data.load_from_csv('dataset/', 'dataset_metadata.json')
-
-# Optional: Apply polynomial feature expansion
-data.feature_expansion(degree=2)
-
-# Add intercept term
+data.load_from_csv('dataset/', 'metadata.json')
 data.add_intercept()
-
-# Save preprocessed data for faster loading
-data.save_to_numpy_file('data.npz')
+data.save_to_numpy_file('data.npz')  # Cache preprocessed data for fast reloading
 ```
 
-### Training Custom Models
+### Train a model with cross-validation
 
 ```python
 from data_cleaning import Data
 from dataset import Dataset
 from models import LogisticRegressionGD
+from methods import cross_validate
 
 data = Data()
 data.load_from_numpy_file("data.npz")
+data.add_intercept()
 
-# Create dataset with cross-validation
-dataset = Dataset(data.x_train, data.y_train, 
-                  num_cont_features=data.num_cont_features, 
-                  seed=42)
+dataset = Dataset(data.x_train, data.y_train, num_cont_features=data.num_cont_features, seed=42)
+model = LogisticRegressionGD(max_iters=400, gamma=0.7)
 
-# Train logistic regression
-model = LogisticRegressionGD(max_iters=300, gamma=0.1)
-
-# 5-fold cross-validation
-for x_tr, y_tr, x_val, y_val, mean, std in dataset.k_fold_generator(k=5):
-    model.fit(x_tr, y_tr)
-    predictions = model.predict(x_val)
-    # Evaluate...
+# 5-fold CV with threshold optimization per fold
+metrics = cross_validate(model, dataset, k_fold=5, search_threshold_iterations=100)
 ```
 
-## Reproducing Experimental Results
+---
 
-To reproduce the plots and metrics reported in the paper, you can run the experiment scripts in the `experiments/` directory:
+## Reproducing Experiments
 
 ### Feature Expansion Analysis (Figure 1)
 
@@ -226,182 +167,42 @@ To reproduce the plots and metrics reported in the paper, you can run the experi
 PYTHONPATH=$PYTHONPATH:. python experiments/exp_feature_expansion/exp.py
 ```
 
-This generates the csv with training/validation losses, F1-score, and accuracy versus polynomial degree for linear regression.
-
-### Learning Rate Sensitivity Analysis (Figure 2)
+### Learning Rate Sensitivity (Figure 2)
 
 ```bash
 PYTHONPATH=$PYTHONPATH:. python experiments/exp_gamma_LogR/exp.py
 ```
 
-This generates the csv with accuracy and F1-score at different learning rates (gamma) for Logistic Regression with optimized thresholds.
-
-### Individual Model Evaluations (Table 1)
-
-To reproduce specific entries in the performance comparison table, run the corresponding scripts:
+### Individual Model Benchmarks (Table 1)
 
 ```bash
-# Linear Regression - No Treatment
-PYTHONPATH=$PYTHONPATH:. python experiments/individual_values/LR.py
-
-# Linear Regression - Loss Balancing
+# Examples — all 8 variants available in experiments/individual_values/
+PYTHONPATH=$PYTHONPATH:. python experiments/individual_values/LogR_th.py     # Best model
 PYTHONPATH=$PYTHONPATH:. python experiments/individual_values/LR_balanced.py
-
-# Linear Regression - Threshold Adjustment
-PYTHONPATH=$PYTHONPATH:. python experiments/individual_values/LR_th.py
-
-# Linear Regression - Both Treatments
-PYTHONPATH=$PYTHONPATH:. python experiments/individual_values/LR_balanced_th.py
-
-# Logistic Regression - No Treatment
-PYTHONPATH=$PYTHONPATH:. python experiments/individual_values/LogR.py
-
-# Logistic Regression - Loss Balancing
-PYTHONPATH=$PYTHONPATH:. python experiments/individual_values/LogR_balanced.py
-
-# Logistic Regression - Threshold Adjustment
-PYTHONPATH=$PYTHONPATH:. python experiments/individual_values/LogR_th.py
-
-# Logistic Regression - Both Treatments
-PYTHONPATH=$PYTHONPATH:. python experiments/individual_values/LogR_balanced_th.py
 ```
 
-**Note:** Each experiment script performs 5-fold cross-validation and may take several minutes to complete. Results will be displayed in the console and/or saved as CSV files in the respective experiment directories.
-
-## Methodology
-
-### 1. Data Preprocessing
-
-**Feature Filtering:**
-- Removed 182 features with >10% NaN ratio
-- Removed zero-variance (homogeneous) features
-- Retained 139 reliable features
-
-**Feature Processing:**
-- **Categorical features:** One-hot encoded, NaNs treated as separate category
-- **Continuous features:** NaN values mapped to column mean
-- **Calculated variables:** Retained for capturing feature interactions
-- **71 features:** Manually processed with domain knowledge
-- **Remaining features:** Algorithmically processed
-
-**Data Structure (after preprocessing):**
-```
-[Intercept | Continuous Features | One-Hot Encoded Categorical Features]
-```
-
-**Standardization:**
-- Applied z-score standardization (μ=0, σ=1)
-- Computed exclusively on training partition to prevent data leakage
-- Applied only to continuous features (preserves one-hot encoding)
-
-### 2. Model Selection
-
-**Models Evaluated:**
-- Linear Regression (Gradient Descent)
-- Logistic Regression
-
-**Training Configuration:**
-- 5-fold Cross-Validation
-- Maximum 200 iterations (300 for final model)
-- Reproducible random seed
-
-### 3. Handling Class Imbalance
-
-Three approaches tested:
-
-1. **Loss Balancing:** Multiply loss by $\frac{N_{neg}}{N_{pos}}$ for positive samples
-2. **Threshold Adjustment:** Optimize decision threshold to maximize F1-score
-3. **Both:** Combined approach
-
-### 4. Feature Expansion
-
-Tested polynomial feature expansion up to degree 7. Results showed no improvement, indicating the relationship between features and target is primarily linear.
-
-## Results
-
-### Performance Comparison
-
-| Model | Treatment | F1-Score | Accuracy |
-|-------|-----------|----------|----------|
-| Linear Regression | No Treatment | 0.000 | 0.910 |
-| Linear Regression | Loss Balancing | 0.347 | 0.737 |
-| Linear Regression | Threshold Adjustment | 0.402 | 0.858 |
-| **Linear Regression** | **Both** | **0.410** | **0.880** |
-| Logistic Regression | No Treatment | 0.420 | 0.892 |
-| Logistic Regression | Loss Balancing | 0.395 | 0.894 |
-| **Logistic Regression** | **Threshold Adjustment** | **0.424** | **0.868** |
-| Logistic Regression | Both | 0.412 | 0.859 |
-
-**Best Model:** Logistic Regression with Threshold Adjustment
-
-### Learning Rate Sensitivity
-
-Logistic regression proved highly robust across a wide range of learning rates (γ), maintaining good F1-scores. Performance deteriorates only at extremes:
-- **Very low gamma:** Insufficient convergence within iteration limit
-- **Very high gamma:** Optimization begins to diverge
+---
 
 ## Key Findings
 
-1. **Class Imbalance is Critical:** Initial models predicted all negative due to 90:10 class imbalance
-2. **Threshold Adjustment Works:** Model-agnostic technique that improved both linear and logistic regression
-3. **Logistic Regression is Robust:** Inherently resistant to class imbalance, performs better overall
-4. **Loss Balancing for Linear Models:** Essential for linear regression but doesn't help logistic regression
-5. **Linear Relationships Dominate:** Feature expansion provided no benefit, suggesting primarily linear patterns
-6. **Data Leakage Prevention:** Critical to compute standardization parameters exclusively from training data
+1. **Scratch implementations match expected behavior** — gradient descent converges reliably; logistic regression outperforms linear on imbalanced data even without treatment
+2. **Threshold adjustment is model-agnostic and highly effective** — works well for both linear and logistic regression
+3. **Loss balancing is only necessary for linear models** — logistic regression's sigmoid output provides natural calibration that reduces the impact of class imbalance
+4. **No benefit from non-linear feature expansion** — polynomial features up to degree 7 showed no validation improvement, confirming near-linear relationships in this dataset
+5. **Data leakage is non-trivial to avoid** — computing standardization on the full dataset (rather than per fold) inflated validation metrics and required explicit correction
 
-## Future Work
+---
 
-**Priority:** Reduce False Negative rate (currently 45% of MICHD cases missed)
+## Further Reading
 
-For real-world patient diagnosis, minimizing missed diagnoses is critical as it represents the greatest patient risk.
+- [Report.pdf](Report.pdf) — Full technical report with methodology, results, and analysis
+- [codebook.pdf](codebook.pdf) — CDC BRFSS feature documentation used for manual feature curation
+- [project1_description.pdf](project1_description.pdf) — Original project specification
 
-**Potential Improvements:**
-- Ensemble methods
-- Advanced feature engineering
-- Deep learning approaches
-- Cost-sensitive learning optimized for recall
-- External data augmentation
+---
 
-## Requirements
+## Authors
 
-- Python 3.13+
-- NumPy
+[Lluc Santamaria Riba](https://github.com/Lluc24) · [Francisco Badia Laguillo](https://github.com/siscubl04) · [Aleksandra Zawadzka](https://github.com/piefek1)
 
-## Project Files
-
-This repository includes all materials from our original submission:
-
-### Documentation
-- **Report.pdf** - Our complete technical report (submitted for grading)
-- **ML_project_1.pdf** - Official project requirements and specifications
-- **codebook.pdf** - Comprehensive dataset documentation with feature descriptions
-- **README.md** - This file (project overview and usage guide)
-
-### Dataset
-The `dataset/` directory contains:
-- `x_train.csv` - Training features (328,135 samples × 321 features)
-- `y_train.csv` - Training labels
-- `x_test.csv` - Test features
-- `sample_submission.csv` - Submission format template
-
-**Note:** Dataset files can also be downloaded from the [official project page](https://github.com/epfml/ML_course/blob/main/projects/project1/data/dataset.zip).
-
-### Code Structure
-- **run.py** - Main execution script
-- **implementations.py** - Core ML algorithms (per project specification)
-- **models.py** - Model implementations
-- **methods.py** - Training utilities
-- **dataset.py** - Data handling
-- **data_cleaning.py** - Preprocessing pipeline
-- **helpers.py** - Utility functions
-- **dataset_metadata.json** - Feature metadata
-
-## License
-
-This project is part of the CS-433 Machine Learning course at EPFL.
-
-## References
-
-- U.S. CDC Behavioral Risk Factor Surveillance System (BRFSS)
-- British Heart Foundation Statistics (2025)
-
+*CS-433 Machine Learning — EPFL, Fall 2025*
